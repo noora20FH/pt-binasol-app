@@ -10,6 +10,7 @@ Project ini menggunakan kombinasi teknologi modern yang memastikan performa fron
 
 | Komponen | Teknologi | Keterangan |
 | --- | --- | --- |
+|**Environment**|	[PHP 8.3.9] |	Versi PHP stabil yang mendukung fitur readonly properties dan types yang lebih ketat.
 | **Backend** | [Laravel 12](https://laravel.com) | Framework PHP terbaru dengan fitur keamanan dan performa tercanggih. |
 | **Frontend** | [React.js](https://reactjs.org) | Library UI untuk antarmuka yang dinamis. |
 | **Bridge** | [Inertia.js](https://inertiajs.com) | Menghubungkan Laravel & React tanpa kerumitan REST API tradisional. |
@@ -58,8 +59,8 @@ Dengan 50 karyawan, risiko kebocoran data internal menjadi perhatian utama. Lara
 
 Untuk perusahaan ukuran ini, aplikasi biasanya mencakup sistem HR, manajemen cuti, atau CRM internal.
 
-* **Laravel 12** sangat efisien dalam menangani traffic menengah hingga tinggi dengan penggunaan memori yang lebih optimal dibanding versi sebelumnya.
-* Dukungan penuh terhadap PHP 8.4+ memberikan peningkatan kecepatan eksekusi kode yang signifikan.
+* **Laravel 12** dirancang untuk performa tinggi dengan manajemen memori yang jauh lebih efisien, memastikan sistem tetap ringan meski menangani traffic internal perusahaan yang padat.
+* Implementasi **PHP 8.3.9** menjamin stabilitas sistem yang luar biasa dengan dukungan fitur modern (seperti Readonly Classes dan Typed Constants) yang mempercepat eksekusi kode secara signifikan tanpa mengorbankan keamanan.
 
 ### 3. Kemudahan Pemeliharaan (Maintenance)
 

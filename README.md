@@ -10,6 +10,7 @@ Project ini menggunakan kombinasi teknologi modern yang memastikan performa fron
 
 | Komponen | Teknologi | Keterangan |
 | --- | --- | --- |
+| **Node.js:** | [v22.14.0] | Runtime untuk kompilasi asset frontend (Vite/React).
 |**Environment**|	[PHP 8.3.9] |	Versi PHP stabil yang mendukung fitur readonly properties dan types yang lebih ketat.
 | **Backend** | [Laravel 12](https://laravel.com) | Framework PHP terbaru dengan fitur keamanan dan performa tercanggih. |
 | **Frontend** | [React.js](https://reactjs.org) | Library UI untuk antarmuka yang dinamis. |

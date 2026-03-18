@@ -1,0 +1,344 @@
+/* Explicit Styles untuk Semua Elemen */
+/* File ini memastikan SEMUA elemen terlihat dengan jelas dan eksplisit */
+
+:root {
+    --color-primary: #ea580c;
+    --color-primary-dark: #c2410c;
+    --color-white: #ffffff;
+    --color-black: #1c1917;
+    --color-gray-light: #f5f5f4;
+    --color-gray-medium: #d6d3d1;
+    --color-gray-dark: #78716b;
+    --color-text: #1c1917;
+    --color-border: #d6d3d1;
+    --color-bg: #ffffff;
+}
+
+/* ===== TEXT STYLING ===== */
+body {
+    color: var(--color-text) !important;
+    background-color: var(--color-bg) !important;
+    font-size: 16px !important;
+    font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-black) !important;
+    font-weight: 700 !important;
+}
+
+h1 {
+    font-size: 2.5rem !important;
+}
+
+h2 {
+    font-size: 2rem !important;
+}
+
+h3 {
+    font-size: 1.5rem !important;
+}
+
+h4 {
+    font-size: 1.25rem !important;
+}
+
+p, span, label, a {
+    color: var(--color-text) !important;
+    font-size: 1rem !important;
+    opacity: 1 !important;
+}
+
+/* Aggressive text visibility rules */
+p {
+    color: var(--color-text) !important;
+    opacity: 1 !important;
+    line-height: 1.6 !important;
+}
+
+p strong, p b {
+    color: var(--color-black) !important;
+    font-weight: 700 !important;
+}
+
+span {
+    color: var(--color-text) !important;
+    opacity: 1 !important;
+}
+
+label {
+    color: var(--color-black) !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+/* ===== CARD STYLING ===== */
+.card, 
+[class*="card"],
+[class*="rounded-lg"],
+[class*="shadow"] {
+    background-color: var(--color-white) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 8px !important;
+}
+
+/* ===== TABLE STYLING ===== */
+table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background-color: var(--color-white) !important;
+}
+
+table thead {
+    background-color: var(--color-gray-light) !important;
+}
+
+table thead th {
+    color: var(--color-black) !important;
+    font-weight: 700 !important;
+    padding: 12px !important;
+    text-align: left !important;
+    border: 1px solid var(--color-border) !important;
+    background-color: var(--color-gray-light) !important;
+}
+
+table tbody td {
+    color: var(--color-text) !important;
+    padding: 12px !important;
+    border: 1px solid var(--color-border) !important;
+    background-color: var(--color-white) !important;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: var(--color-gray-light) !important;
+}
+
+table tbody tr:hover {
+    background-color: #fff7ed !important;
+}
+
+/* ===== INPUT & FORM STYLING ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="tel"],
+textarea,
+select {
+    color: var(--color-text) !important;
+    background-color: var(--color-white) !important;
+    border: 2px solid var(--color-border) !important;
+    border-radius: 6px !important;
+    padding: 10px 12px !important;
+    font-size: 1rem !important;
+    font-family: inherit !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
+select:focus {
+    outline: none !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1) !important;
+    background-color: var(--color-white) !important;
+}
+
+textarea {
+    resize: vertical !important;
+    min-height: 120px !important;
+}
+
+/* ===== BUTTON STYLING (BACKUP) ===== */
+button,
+.btn,
+[role="button"] {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    color: var(--color-text) !important;
+}
+
+button:not([class*="secondary"]):not([class*="outline"]),
+.btn-primary,
+[role="button"]:not([class*="secondary"]) {
+    background-color: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+button:not([class*="secondary"]):hover,
+.btn:hover,
+[role="button"]:hover {
+    background-color: var(--color-primary-dark) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3) !important;
+}
+
+/* ===== GRID & LAYOUT ===== */
+.grid, [class*="grid-cols"] {
+    display: grid !important;
+    gap: 1.5rem !important;
+}
+
+.flex, [class*="flex"] {
+    display: flex !important;
+    color: var(--color-text) !important;
+}
+
+/* ===== SECTION STYLING ===== */
+section {
+    background-color: var(--color-white) !important;
+    color: var(--color-text) !important;
+}
+
+section:nth-child(even) {
+    background-color: var(--color-gray-light) !important;
+}
+
+/* ===== BADGE & LABEL ===== */
+.badge, [class*="badge"],
+.label, [class*="label"],
+.tag, [class*="tag"] {
+    display: inline-block !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    background-color: var(--color-gray-light) !important;
+    color: var(--color-text) !important;
+    border: 1px solid var(--color-border) !important;
+}
+
+/* ===== ICON STYLING ===== */
+svg {
+    color: inherit !important;
+}
+
+svg[class*="w-"] {
+    stroke-width: 2 !important;
+}
+
+/* ===== LINK STYLING ===== */
+a, [role="link"] {
+    color: var(--color-primary) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+a:hover, [role="link"]:hover {
+    color: var(--color-primary-dark) !important;
+    text-decoration: underline !important;
+}
+
+/* ===== DIVIDER ===== */
+hr, [role="separator"] {
+    border: none !important;
+    border-top: 2px solid var(--color-border) !important;
+    margin: 1.5rem 0 !important;
+}
+
+/* ===== LIST STYLING ===== */
+ul, ol {
+    color: var(--color-text) !important;
+}
+
+li {
+    color: var(--color-text) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* ===== STRONG VISIBILITY ===== */
+.hidden { display: none !important; }
+.block { display: block !important; }
+.inline { display: inline !important; }
+.inline-block { display: inline-block !important; }
+
+/* Show all text - very important! */
+* {
+    color: inherit !important;
+}
+
+/* Override tailwind opacity issues - CRITICAL FIX */
+.opacity-0 { opacity: 1 !important; }
+.opacity-5 { opacity: 1 !important; }
+.opacity-10 { opacity: 1 !important; }
+.opacity-20 { opacity: 1 !important; }
+.opacity-25 { opacity: 1 !important; }
+.opacity-30 { opacity: 1 !important; }
+.opacity-40 { opacity: 1 !important; }
+.opacity-50 { opacity: 1 !important; }
+.opacity-60 { opacity: 1 !important; }
+.opacity-70 { opacity: 1 !important; }
+.opacity-75 { opacity: 1 !important; }
+.opacity-80 { opacity: 1 !important; }
+.opacity-90 { opacity: 1 !important; }
+.opacity-95 { opacity: 1 !important; }
+.opacity-100 { opacity: 1 !important; }
+
+/* Force text visibility regardless of opacity classes */
+p.opacity-90,
+p.opacity-80,
+p.opacity-70,
+p.opacity-50,
+span.opacity-90,
+span.opacity-80,
+span.opacity-70,
+span.opacity-50 {
+    opacity: 1 !important;
+    color: var(--color-text) !important;
+    font-size: inherit !important;
+}
+
+[class*="text-white"] {
+    color: var(--color-white) !important;
+}
+
+[class*="text-"] {
+    color: inherit !important;
+}
+
+/* Ensure backgrounds don't hide text */
+[class*="bg-white"] {
+    background-color: var(--color-white) !important;
+}
+
+[class*="bg-gray"] {
+    background-color: var(--color-gray-light) !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    h1 { font-size: 1.875rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.25rem !important; }
+    
+    button, .btn {
+        padding: 10px 16px !important;
+        font-size: 0.95rem !important;
+    }
+    
+    table {
+        font-size: 0.875rem !important;
+    }
+    
+    table thead th,
+    table tbody td {
+        padding: 8px !important;
+    }
+}

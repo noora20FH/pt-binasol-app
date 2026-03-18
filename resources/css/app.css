@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import explicit styling untuk memastikan semua terlihat */
+@import './explicit.css';

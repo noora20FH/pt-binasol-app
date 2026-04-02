@@ -56,9 +56,21 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+/* ======================== ADMIN SECTION ======================== */
+
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
         ->name('admin.dashboard');
+
+    // === Perfilman (Film Management) ===
+    Route::get('/admin/films', function () {
+        return Inertia::render('Admin/FilmManagement');
+    })->name('admin.films');
+
+    // Film CRUD
+    Route::post('/admin/films', [FilmController::class, 'store'])->name('films.store');
+    Route::patch('/admin/films/{film}', [FilmController::class, 'update'])->name('films.update');
+    Route::delete('/admin/films/{film}', [FilmController::class, 'destroy'])->name('films.destroy');
 
     // Admin Routes - Categories
     Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
@@ -69,11 +81,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
     Route::patch('/admin/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-
-    // Admin Routes - Films
-    Route::post('/admin/films', [FilmController::class, 'store'])->name('films.store');
-    Route::patch('/admin/films/{film}', [FilmController::class, 'update'])->name('films.update');
-    Route::delete('/admin/films/{film}', [FilmController::class, 'destroy'])->name('films.destroy');
 
     // Admin Routes - Orders
     Route::get('/admin/orders', [OrderController::class, 'index'])->name('orders.index');

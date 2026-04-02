@@ -11,13 +11,16 @@ use App\Http\Controllers\CarouselSlideController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\AdminController;          // ← already added, good
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Public Routes
+// Public Routes (guests & customers)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])
+    ->middleware('redirect.admin.cms')           // ← middleware moved here
+    ->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact', [HomeController::class, 'sendContact'])->name('contact.send');
@@ -46,12 +49,16 @@ Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.cle
 // Dashboard & authenticated routes
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'redirect.admin.cms'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Admin Dashboard
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+        ->name('admin.dashboard');
 
     // Admin Routes - Categories
     Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');

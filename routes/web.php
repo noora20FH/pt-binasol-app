@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-/* ======================== ADMIN SECTION ======================== */
+    /* ======================== ADMIN SECTION ======================== */
 
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
@@ -66,6 +66,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/films', function () {
         return Inertia::render('Admin/FilmManagement');
     })->name('admin.films');
+
+    // Retail & Construction Products (halaman yang sedang kamu kerjakan)
+    Route::get('/admin/retail-products', function () {
+        return Inertia::render('Admin/ProductManagement', ['type' => 'retail']);
+    })->name('admin.retail-products');
+
+    Route::get('/admin/construction-products', function () {
+        return Inertia::render('Admin/ProductManagement', ['type' => 'construction']);
+    })->name('admin.construction-products');
 
     // Film CRUD
     Route::post('/admin/films', [FilmController::class, 'store'])->name('films.store');
@@ -108,4 +117,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

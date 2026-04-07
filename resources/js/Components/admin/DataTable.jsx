@@ -1,31 +1,11 @@
 import { useState } from 'react';
 import { Search, Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from '../../hooks/useInertiaForm.tsx';
+import { Link } from '../../hooks/useInertiaForm.jsx';   // ← diperbaiki .tsx → .jsx
 
-interface Column<T> {
-  key: string;
-  label: string;
-  render?: (value: any, row: T) => React.ReactNode;
-}
-
-interface DataTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  searchable?: boolean;
-  searchPlaceholder?: string;
-  onEdit?: (row: T) => void;
-  onDelete?: (row: T) => void;
-  onView?: (row: T) => void;
-  editHref?: (row: T) => string;
-  viewHref?: (row: T) => string;
-  createHref?: string;
-  createLabel?: string;
-  emptyMessage?: string;
-}
-
-export function DataTable<T extends Record<string, any>>({
-  data,
-  columns,
+// TIDAK ADA LAGI interface / generic TypeScript
+export function DataTable({
+  data = [],
+  columns = [],
   searchable = true,
   searchPlaceholder = 'Search...',
   onEdit,
@@ -36,7 +16,7 @@ export function DataTable<T extends Record<string, any>>({
   createHref,
   createLabel = 'Create New',
   emptyMessage = 'No data available',
-}: DataTableProps<T>) {
+}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -213,8 +193,8 @@ export function DataTable<T extends Record<string, any>>({
   );
 }
 
-// Badge component for status indicators
-export function StatusBadge({ status, type = 'default' }: { status: string; type?: 'default' | 'success' | 'warning' | 'danger' | 'info' }) {
+// Badge component for status indicators (sudah diubah jadi pure JS)
+export function StatusBadge({ status, type = 'default' }) {
   const colors = {
     default: 'bg-gray-100 text-gray-800',
     success: 'bg-green-100 text-green-800',

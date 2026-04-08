@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import FilmForm from "@/Components/admin/FilmForm";
+import { DataTable } from '@/Components/cms/DataTable';
 
 // Mock data — EXACTLY sama seperti yang kamu berikan (nama variabel tidak boleh berubah)
 const mockFilms = [
@@ -118,14 +118,9 @@ const mockFilms = [
 ];
 
 export default function FilmManagement() {
-    const [searchTerm, setSearchTerm] = useState("");
     const [view, setView] = useState("list"); // 'list' | 'create' | 'edit'
     const [selectedFilm, setSelectedFilm] = useState(null);
     const [films, setFilms] = useState(mockFilms);
-
-    const filteredFilms = films.filter((film) =>
-        film.title.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
 
     // Handle Create
     const handleCreate = () => {
@@ -156,11 +151,7 @@ export default function FilmManagement() {
     // Handle Save (Create / Edit)
     const handleSave = (data) => {
         console.log("Film disimpan:", data);
-        alert(
-            mode === "create"
-                ? "Film berhasil ditambahkan!"
-                : "Film berhasil diupdate!",
-        );
+        alert("Film berhasil disimpan!");
         handleBack();
     };
 
@@ -181,11 +172,80 @@ export default function FilmManagement() {
         );
     }
 
-    // Tampilan List (Tabel)
+    // Kolom tabel (hanya ini yang diubah sesuai desain DataTable)
+    const columns = [
+        {
+            key: "id",
+            label: "ID",
+            render: (value) => `#${value}`,
+        },
+        {
+            key: "poster",
+            label: "POSTER",
+            render: (value) => (
+                <img
+                    src={value}
+                    alt="poster"
+                    className="w-12 h-16 object-cover rounded-xl shadow-sm"
+                />
+            ),
+        },
+        { key: "title", label: "JUDUL" },
+        {
+            key: "description",
+            label: "DESKRIPSI",
+            render: (value) => (
+                <div className="max-w-xs truncate text-sm text-gray-600">
+                    {value}
+                </div>
+            ),
+        },
+        {
+            key: "genres",
+            label: "GENRE",
+            render: (value) => (
+                <span className="inline-flex px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                    {value}
+                </span>
+            ),
+        },
+        {
+            key: "rating",
+            label: "RATING",
+            render: (value) => <span className="font-medium">⭐ {value}</span>,
+        },
+        { key: "year", label: "TAHUN" },
+        {
+            key: "is_featured",
+            label: "UNGGULAN",
+            render: (value) =>
+                value ? (
+                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                        Ya
+                    </span>
+                ) : (
+                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                        Tidak
+                    </span>
+                ),
+        },
+        {
+            key: "created_at",
+            label: "DIBUAT",
+            render: (value) => new Date(value).toLocaleDateString("id-ID"),
+        },
+        {
+            key: "updated_at",
+            label: "DIPERBARUI",
+            render: (value) => new Date(value).toLocaleDateString("id-ID"),
+        },
+    ];
+
+    // Tampilan List → HANYA BAGIAN TABEL YANG DIGANTI DENGAN DataTable
     return (
         <AdminLayout title="Manajemen Film" activeTab="perfilman">
             <div className="max-w-screen-2xl mx-auto">
-                {/* Header */}
+                {/* Header (tidak diubah) */}
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">
@@ -195,159 +255,19 @@ export default function FilmManagement() {
                             Kelola data film, cast, dan episode
                         </p>
                     </div>
-
-                    <button
-                        onClick={handleCreate}
-                        className="flex items-center gap-2 bg-[#FF751F] hover:bg-[#e66a1c] text-white px-6 py-3 rounded-xl font-medium transition-colors"
-                    >
-                        <Plus className="w-5 h-5" />
-                        Tambah Film
-                    </button>
                 </div>
 
-                {/* Search Bar */}
-                <div className="relative mb-6">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <Search className="w-5 h-5" />
-                    </div>
-                    <input
-                        type="text"
-                        placeholder="Cari film..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:border-[#FF751F] text-gray-700 placeholder-gray-400"
-                    />
-                </div>
-
-                {/* Table dengan semua kolom yang diminta */}
-                <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1400px]">
-                            <thead>
-                                <tr className="bg-gray-50 border-b">
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        ID
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        POSTER
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        JUDUL
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        DESKRIPSI
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        GENRE
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        RATING
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        TAHUN
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        UNGGULAN
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        DIBUAT
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        DIPERBARUI
-                                    </th>
-                                    <th className="px-6 py-5 text-left text-sm font-semibold text-gray-500">
-                                        AKSI
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                                {filteredFilms.map((film) => (
-                                    <tr
-                                        key={film.id}
-                                        className="hover:bg-gray-50 transition-colors"
-                                    >
-                                        <td className="px-6 py-5 font-medium text-gray-900">
-                                            #{film.id}
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <img
-                                                src={film.poster}
-                                                alt={film.title}
-                                                className="w-12 h-16 object-cover rounded-xl shadow-sm"
-                                            />
-                                        </td>
-                                        <td className="px-6 py-5 font-semibold text-gray-900">
-                                            {film.title}
-                                        </td>
-                                        <td className="px-6 py-5 text-gray-600 text-sm max-w-xs truncate">
-                                            {film.description}
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <span className="inline-flex px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-                                                {film.genres}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-5 font-medium">
-                                            ⭐ {film.rating}
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            {film.year}
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            {film.is_featured ? (
-                                                <span className="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
-                                                    Ya
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
-                                                    Tidak
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-5 text-xs text-gray-500">
-                                            {new Date(
-                                                film.created_at,
-                                            ).toLocaleDateString("id-ID")}
-                                        </td>
-                                        <td className="px-6 py-5 text-xs text-gray-500">
-                                            {new Date(
-                                                film.updated_at,
-                                            ).toLocaleDateString("id-ID")}
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <div className="flex gap-3">
-                                                <button
-                                                    onClick={() =>
-                                                        handleEdit(film)
-                                                    }
-                                                    className="flex items-center gap-1 text-[#FF751F] hover:text-orange-600"
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        handleDelete(film)
-                                                    }
-                                                    className="flex items-center gap-1 text-red-500 hover:text-red-600"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                    Hapus
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {filteredFilms.length === 0 && (
-                    <div className="text-center py-12 text-gray-500">
-                        Tidak ada film yang ditemukan
-                    </div>
-                )}
+                {/* DataTable (search + tombol Tambah Film + tabel sesuai desain gambar) */}
+                <DataTable
+                    data={films}
+                    columns={columns}
+                    onCreate={handleCreate}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    createLabel="Tambah Film"
+                    searchPlaceholder="Cari film..."
+                    emptyMessage="Tidak ada film yang ditemukan"
+                />
             </div>
         </AdminLayout>
     );

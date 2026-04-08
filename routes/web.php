@@ -63,9 +63,8 @@ Route::middleware('auth')->group(function () {
         ->name('admin.dashboard');
 
     // === Perfilman (Film Management) ===
-    Route::get('/admin/films', function () {
-        return Inertia::render('Admin/FilmManagement');
-    })->name('admin.films');
+    Route::resource('admin/films', \App\Http\Controllers\Admin\FilmController::class)
+        ->names('admin.films');
 
     // Retail & Construction Products (halaman yang sedang kamu kerjakan)
     Route::get('/admin/retail-products', function () {
@@ -88,46 +87,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/carousel-slides', function () {
         return Inertia::render('Admin/CarouselManagement');
     })->name('admin.carousel-slides');
-
-
-    // // Film CRUD
-    // Route::post('/admin/films', [FilmController::class, 'store'])->name('films.store');
-    // Route::patch('/admin/films/{film}', [FilmController::class, 'update'])->name('films.update');
-    // Route::delete('/admin/films/{film}', [FilmController::class, 'destroy'])->name('films.destroy');
-
-    // // Admin Routes - Categories
-    // Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
-    // Route::patch('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-    // Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-
-    // // Admin Routes - Products
-    // Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
-    // Route::patch('/admin/products/{product}', [ProductController::class, 'update'])->name('products.update');
-    // Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-
-    // // Admin Routes - Orders
-
-    // Route::patch('/admin/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-    // Route::delete('/admin/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
-    // Route::post('/admin/orders', [OrderController::class, 'store'])->name('orders.store');
-
-    // // Admin Routes - Team Members
-
-    // Route::post('/admin/team-members', [TeamMemberController::class, 'store'])->name('team-members.store');
-    // Route::patch('/admin/team-members/{teamMember}', [TeamMemberController::class, 'update'])->name('team-members.update');
-    // Route::delete('/admin/team-members/{teamMember}', [TeamMemberController::class, 'destroy'])->name('team-members.destroy');
-
-    // // Admin Routes - Carousel Slides
-    // Route::get('/admin/carousel-slides', [CarouselSlideController::class, 'index'])->name('carousel-slides.index');
-    // Route::post('/admin/carousel-slides', [CarouselSlideController::class, 'store'])->name('carousel-slides.store');
-    // Route::patch('/admin/carousel-slides/{carouselSlide}', [CarouselSlideController::class, 'update'])->name('carousel-slides.update');
-    // Route::delete('/admin/carousel-slides/{carouselSlide}', [CarouselSlideController::class, 'destroy'])->name('carousel-slides.destroy');
-
-    // // Admin Routes - Testimonials
-    // Route::get('/admin/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
-    // Route::post('/admin/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
-    // Route::patch('/admin/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('testimonials.update');
-    // Route::delete('/admin/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
 });
 
 require __DIR__ . '/auth.php';

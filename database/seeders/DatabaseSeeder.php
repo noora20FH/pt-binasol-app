@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Seed assets (films, categories, products) - Auto scan from Asset folder
+        $this->call(AssetAutoSeeder::class);
     }
 }

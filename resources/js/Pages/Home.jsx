@@ -130,22 +130,20 @@ export default function Home({ slides, categories, featuredProducts, featuredFil
                                 href={`/categories/${category.slug}`}
                                 className="group"
                             >
-                                <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64">
+                                <div className={`relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64 ${category.is_logo ? 'bg-white' : 'bg-gradient-to-br from-gray-400 to-gray-600'}`}>
                                     {category.image && (
                                         <img
-                                            src={category.image}
+                                            src={encodeURI(category.image)}
                                             alt={category.name}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                            className={`w-full h-full transition duration-300 group-hover:scale-110 ${category.is_logo ? 'object-contain p-6' : 'object-cover'}`}
                                             loading="lazy"
+                                            onError={(e) => {
+                                                e.target.style.display = 'none';
+                                            }}
                                         />
                                     )}
-                                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition" />
+                                    <div className={`absolute inset-0 transition ${category.is_logo ? 'bg-black/20 group-hover:bg-black/30' : 'bg-black/30 group-hover:bg-black/50'}`} />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                                        {category.icon && (
-                                            <div className="text-5xl mb-3">
-                                                {category.icon}
-                                            </div>
-                                        )}
                                         <h3 className="text-2xl font-bold text-center">
                                             {category.name}
                                         </h3>
@@ -171,7 +169,7 @@ export default function Home({ slides, categories, featuredProducts, featuredFil
                     <h2 className="text-4xl font-bold text-center mb-12 text-secondary-900">
                         Produk Unggulan
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {featuredProducts.map((product) => (
                             <Link
                                 key={product.id}
@@ -233,6 +231,64 @@ export default function Home({ slides, categories, featuredProducts, featuredFil
                     </div>
                 </div>
             </section>
+
+            {/* Featured Films Section */}
+            {featuredFilms && featuredFilms.length > 0 && (
+                <section className="py-16 bg-secondary-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-4xl font-bold text-center mb-12 text-secondary-900">
+                            Film & Serial Unggulan
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {featuredFilms.map((film) => (
+                                <Link
+                                    key={film.id}
+                                    href={`/films/${film.id}`}
+                                    className="group h-full"
+                                >
+                                    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden h-full flex flex-col">
+                                        {/* Poster */}
+                                        <div className="relative overflow-hidden bg-secondary-100 aspect-[3/4]">
+                                            {film.poster ? (
+                                                <img
+                                                    src={film.poster}
+                                                    alt={film.title}
+                                                    loading="lazy"
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    onError={(e) => {
+                                                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="300"%3E%3Crect fill="%23e0e0e0" width="200" height="300"/%3E%3Ctext x="50%25" y="50%25" font-size="14" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-secondary-400">
+                                                    No Image
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* Info */}
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            <h3 className="font-semibold text-secondary-900 group-hover:text-primary-600 transition line-clamp-2 mb-2">
+                                                {film.title}
+                                            </h3>
+                                            {film.rating && (
+                                                <div className="flex items-center justify-between text-sm">
+                                                    <span className="text-primary-500 font-semibold">⭐ {film.rating}</span>
+                                                    <span className="text-secondary-500">{film.year}</span>
+                                                </div>
+                                            )}
+                                            {film.genres && (
+                                                <p className="text-secondary-500 text-xs mt-2 line-clamp-1">
+                                                    {film.genres}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Testimonials Section */}
             {testimonials.length > 0 && (

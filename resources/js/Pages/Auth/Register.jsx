@@ -57,9 +57,6 @@ export default function Register() {
                     >
                         <option value="customer">Customer / Pelanggan</option>
                         <option value="admin">Admin</option>
-                        <option value="karyawan_tetap">Karyawan Tetap</option>
-                        <option value="karyawan_kontrak">Karyawan Kontrak</option>
-                        <option value="magang">Magang</option>
                     </select>
 
                     <InputError message={errors.role} className="mt-2" />

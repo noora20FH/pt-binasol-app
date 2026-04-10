@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::select('id', 'name', 'slug', 'image', 'icon', 'type')
+        $categories = Category::select('id', 'name', 'slug', 'image', 'icon', 'type', 'is_logo')
             ->with('products:id,category_id')
             ->paginate(12);
 
@@ -20,7 +20,7 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        $category->load('products.images');
+        $category->load(['products.images', 'products.specifications', 'products.testimonials']);
 
         return inertia('Categories/Show', [
             'category' => $category,

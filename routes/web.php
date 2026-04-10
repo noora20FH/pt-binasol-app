@@ -18,6 +18,10 @@ use Inertia\Inertia;
 // Public Routes
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Debug Routes
+Route::get('/debug/check-films', [\App\Http\Controllers\DebugController::class, 'checkFilms'])->name('debug.films');
+Route::get('/debug/check-database', [\App\Http\Controllers\DebugController::class, 'checkDatabase'])->name('debug.database');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::post('/contact', [HomeController::class, 'sendContact'])->name('contact.send');

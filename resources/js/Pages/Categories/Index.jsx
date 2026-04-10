@@ -31,22 +31,20 @@ export default function CategoriesIndex({ categories }) {
                                         href={`/categories/${category.slug}`}
                                         className="group"
                                     >
-                                        <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64">
+                                        <div className={`relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64 ${category.is_logo ? 'bg-white' : 'bg-gradient-to-br from-gray-400 to-gray-600'}`}>
                                             {category.image && (
                                                 <img
-                                                    src={category.image}
+                                                    src={encodeURI(category.image)}
                                                     alt={category.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                                                    className={`w-full h-full transition duration-300 group-hover:scale-110 ${category.is_logo ? 'object-contain p-6' : 'object-cover'}`}
                                                     loading="lazy"
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none';
+                                                    }}
                                                 />
                                             )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                            <div className={`absolute inset-0 bg-gradient-to-t ${category.is_logo ? 'from-black/40 to-transparent' : 'from-black/60 to-transparent'}`} />
                                             <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                                                {category.icon && (
-                                                    <div className="text-6xl mb-3">
-                                                        {category.icon}
-                                                    </div>
-                                                )}
                                                 <h3 className="text-2xl font-bold text-center group-hover:text-primary-300 transition">
                                                     {category.name}
                                                 </h3>

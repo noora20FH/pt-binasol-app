@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function index()
     {
         $slides = CarouselSlide::select('id', 'title', 'subtitle', 'image', 'link', 'theme')->get();
-        $categories = Category::select('id', 'name', 'slug', 'image', 'icon')
+        $categories = Category::select('id', 'name', 'slug', 'image', 'icon', 'is_logo')
             ->with('products:id,category_id')
             ->limit(6)
             ->get();
@@ -24,7 +24,7 @@ class HomeController extends Controller
             ->where('badge', 'featured')
             ->limit(8)
             ->get();
-        $featuredFilms = Film::select('id', 'title', 'is_featured')
+        $featuredFilms = Film::select('id', 'title', 'poster', 'banner', 'rating', 'year', 'genres', 'is_featured')
             ->where('is_featured', true)
             ->limit(6)
             ->get();

@@ -17,6 +17,7 @@ class Category extends Model
         'image',
         'icon',
         'type',
+        'is_logo',
     ];
 
     public function products()

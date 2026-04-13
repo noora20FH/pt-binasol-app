@@ -1,164 +1,20 @@
-// resources/js/Pages/Admin/ProductManagement.jsx
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { DataTable, StatusBadge } from '@/Components/cms/DataTable';
 import { ProductForm } from '@/Components/cms/ProductForm';
+import { router } from '@inertiajs/react';   // ← TAMBAHKAN INI
 
-// Mock categories (nanti diganti dengan props dari Laravel/Inertia)
-const mockCategories = [
-  {
-    id: 1,
-    name: 'Pakaian Pria',
-    slug: 'pakaian-pria',
-    description: 'Koleksi pakaian pria',
-    image: null,
-    icon: null,
-    type: 'retail',
-    deleted_at: null,
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-01-01T00:00:00Z',
-  },
-  {
-    id: 2,
-    name: 'Elektronik',
-    slug: 'elektronik',
-    description: 'Produk elektronik',
-    image: null,
-    icon: null,
-    type: 'retail',
-    deleted_at: null,
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-01-01T00:00:00Z',
-  },
-  {
-    id: 3,
-    name: 'Semen',
-    slug: 'semen',
-    description: 'Material semen untuk konstruksi',
-    image: null,
-    icon: null,
-    type: 'construction',
-    deleted_at: null,
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-01-01T00:00:00Z',
-  },
-  {
-    id: 4,
-    name: 'Besi Beton',
-    slug: 'besi-beton',
-    description: 'Besi untuk konstruksi',
-    image: null,
-    icon: null,
-    type: 'construction',
-    deleted_at: null,
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-01-01T00:00:00Z',
-  },
-];
-
-// Mock products (nanti diganti dengan props dari Laravel/Inertia)
-const mockProducts = [
-  {
-    id: 1,
-    category_id: 1,
-    name: 'Kemeja Batik Premium',
-    slug: 'kemeja-batik-premium',
-    description: 'Kemeja batik berkualitas tinggi',
-    price: 250000,
-    original_price: 350000,
-    badge: 'Best Seller',
-    stock: 45,
-    deleted_at: null,
-    created_at: '2026-01-15T00:00:00Z',
-    updated_at: '2026-01-15T00:00:00Z',
-    images: [
-      {
-        id: 1,
-        product_id: 1,
-        image_path: 'https://images.unsplash.com/photo-1764560348129-61acc431162d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYXRpayUyMHNoaXJ0JTIwcHJvZHVjdHxlbnwxfHx8fDE3NzQ5NDc0MTV8MA&ixlib=rb-4.1.0&q=80&w=1080',
-        is_primary: true,
-      }
-    ],
-    specifications: [
-      {
-        id: 1,
-        product_id: 1,
-        property: 'Ukuran',
-        value: 'M, L, XL',
-      },
-      {
-        id: 2,
-        product_id: 1,
-        property: 'Bahan',
-        value: 'Katun Premium',
-      },
-    ],
-    testimonials: [
-      {
-        id: 1,
-        product_id: 1,
-        name: 'Budi Santoso',
-        rating: 5,
-        comment: 'Kualitas batik sangat bagus, nyaman dipakai!',
-        image: null,
-        deleted_at: null,
-        created_at: '2026-01-16T00:00:00Z',
-      }
-    ],
-  },
-  {
-    id: 2,
-    category_id: 3,
-    name: 'Semen Portland 50kg',
-    slug: 'semen-portland-50kg',
-    description: 'Semen berkualitas untuk konstruksi',
-    price: 65000,
-    original_price: null,
-    badge: null,
-    stock: 1000,
-    deleted_at: null,
-    created_at: '2026-01-20T00:00:00Z',
-    updated_at: '2026-01-20T00:00:00Z',
-    images: [
-      {
-        id: 2,
-        product_id: 2,
-        image_path: 'https://images.unsplash.com/photo-1762380368593-a0d4c49af47f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjZW1lbnQlMjBiYWclMjBjb25zdHJ1Y3Rpb258ZW58MXx8fHwxNzc0OTQ3NDE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-        is_primary: true,
-      }
-    ],
-    specifications: [
-      {
-        id: 3,
-        product_id: 2,
-        property: 'Material',
-        value: 'Portland Composite Cement',
-      },
-      {
-        id: 4,
-        product_id: 2,
-        property: 'Grade',
-        value: 'Type I',
-      },
-      {
-        id: 5,
-        product_id: 2,
-        property: 'Berat',
-        value: '50 kg',
-      },
-    ],
-  },
-];
-
-export default function ProductManagement({ type = 'retail' }) {
+export default function ProductManagement({
+    type = 'retail',
+    categories = [],
+    products = []
+}) {
   const [view, setView] = useState('list');
   const [selectedProduct, setSelectedProduct] = useState(undefined);
 
-  const categories = mockCategories.filter(c => c.type === type);
-  const products = mockProducts.filter(p => {
-    const category = mockCategories.find(c => c.id === p.category_id);
-    return category?.type === type;
-  });
+  // Tidak perlu mock lagi, pakai data dari Laravel
+  const filteredCategories = categories;
+  const filteredProducts = products;
 
   const handleCreate = () => {
     setSelectedProduct(undefined);
@@ -171,7 +27,9 @@ export default function ProductManagement({ type = 'retail' }) {
   };
 
   const handleDelete = (product) => {
-    console.log('Delete product:', product.id);
+    if (confirm(`Yakin hapus produk "${product.name}"?`)) {
+      router.delete(route('admin.products.destroy', product.id));
+    }
   };
 
   const handleBack = () => {
@@ -180,7 +38,11 @@ export default function ProductManagement({ type = 'retail' }) {
   };
 
   const handleSave = (productData) => {
-    console.log('Save product:', productData);
+    if (view === 'create') {
+      router.post(route('admin.products.store'), { ...productData, type });
+    } else if (view === 'edit' && selectedProduct) {
+      router.put(route('admin.products.update', selectedProduct.id), { ...productData, type });
+    }
     setView('list');
   };
 

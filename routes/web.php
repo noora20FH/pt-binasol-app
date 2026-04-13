@@ -56,7 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /* ======================== ADMIN SECTION ======================== */
+/* ======================== ADMIN SECTION ======================== */
 
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
@@ -66,24 +66,35 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/films', \App\Http\Controllers\Admin\FilmController::class)
         ->names('admin.films');
 
-    // Retail & Construction Products (halaman yang sedang kamu kerjakan)
-    Route::get('/admin/retail-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'retail']);
-    })->name('admin.retail-products');
+    // === Retail & Construction Products (FULL CRUD) ===
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Index Pages
+        Route::get('/retail-products', [\App\Http\Controllers\Admin\ProductController::class, 'indexRetail'])
+             ->name('retail-products');
 
-    Route::get('/admin/construction-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'construction']);
-    })->name('admin.construction-products');
+        Route::get('/construction-products', [\App\Http\Controllers\Admin\ProductController::class, 'indexConstruction'])
+             ->name('construction-products');
 
-    Route::get('/admin/construction-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'construction']);
-    })->name('admin.construction-products');
+        // CRUD Products
+        Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store'])
+             ->name('products.store');
+
+        Route::put('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update'])
+             ->name('products.update');
+
+        Route::delete('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy'])
+             ->name('products.destroy');
+    });
+
+    // === Lainnya ===
     Route::get('/admin/orders', function () {
         return Inertia::render('Admin/OrderManagement');
     })->name('admin.orders');
+
     Route::get('/admin/team-members', function () {
         return Inertia::render('Admin/TeamManagement');
     })->name('admin.team-members');
+
     Route::get('/admin/carousel-slides', function () {
         return Inertia::render('Admin/CarouselManagement');
     })->name('admin.carousel-slides');

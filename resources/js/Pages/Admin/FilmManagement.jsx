@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import FilmForm from "@/Components/admin/FilmForm";
 import { DataTable } from '@/Components/cms/DataTable';
+import { router } from '@inertiajs/react';
 
-export default function FilmManagement({ films: initialFilms }) {   // ← Terima props dari Laravel
+export default function FilmManagement({ films: initialFilms }) {
     const [view, setView] = useState("list");
     const [selectedFilm, setSelectedFilm] = useState(null);
-    const [films, setFilms] = useState(initialFilms);   // ← Pakai data dari database
+    const [films, setFilms] = useState(initialFilms);
 
     // Handle Create
     const handleCreate = () => {
@@ -20,11 +21,26 @@ export default function FilmManagement({ films: initialFilms }) {   // ← Terim
         setView("edit");
     };
 
-    // Handle Delete (sementara client-side, nanti bisa diubah ke Inertia delete)
+    // Handle Delete (Soft Delete)
     const handleDelete = (film) => {
-        if (confirm(`Yakin ingin menghapus film "${film.title}"?`)) {
-            setFilms(films.filter((f) => f.id !== film.id));
-            alert("Film berhasil dihapus!");
+        if (confirm(`Yakin ingin menghapus film "${film.title}"? (Data akan masuk sampah)`)) {
+            router.delete(route('admin.films.destroy', film.id), {
+                onSuccess: () => {
+                    setFilms(prev => prev.filter(f => f.id !== film.id));
+                }
+            });
+        }
+    };
+
+    // Handle Restore (jika sudah ditambahkan sebelumnya)
+    const handleRestore = (film) => {
+        if (confirm(`Yakin ingin mengembalikan film "${film.title}" dari sampah?`)) {
+            router.post(route('admin.films.restore', film.id), {}, {
+                onSuccess: () => {
+                    setFilms(prev => prev.filter(f => f.id !== film.id));
+                    alert('Film berhasil direstore!');
+                }
+            });
         }
     };
 
@@ -34,14 +50,19 @@ export default function FilmManagement({ films: initialFilms }) {   // ← Terim
         setSelectedFilm(null);
     };
 
-    // Handle Save (Create / Edit)
+    // Handle Save
     const handleSave = (data) => {
         console.log("Film disimpan:", data);
         alert("Film berhasil disimpan!");
         handleBack();
     };
 
-    // Jika sedang create atau edit → tampilkan FilmForm
+    // === PERUBAHAN UTAMA: Tambahkan nomor urut tampilan ===
+    const filmsWithNo = films.map((film, index) => ({
+        ...film,
+        display_no: index + 1,   // ← 1, 2, 3, 4, 5... (data terbaru = No. 1)
+    }));
+
     if (view === "create" || view === "edit") {
         return (
             <AdminLayout
@@ -58,9 +79,13 @@ export default function FilmManagement({ films: initialFilms }) {   // ← Terim
         );
     }
 
-    // Kolom tabel (tetap sama seperti sebelumnya)
+    // Kolom tabel (ID sekarang pakai display_no)
     const columns = [
-        { key: "id", label: "ID", render: (value) => `#${value}` },
+        {
+            key: "display_no",
+            label: "ID",
+            render: (value) => `#${value}`
+        },
         {
             key: "poster",
             label: "POSTER",
@@ -110,11 +135,6 @@ export default function FilmManagement({ films: initialFilms }) {   // ← Terim
             label: "DIBUAT",
             render: (value) => new Date(value).toLocaleDateString("id-ID"),
         },
-        {
-            key: "updated_at",
-            label: "DIPERBARUI",
-            render: (value) => new Date(value).toLocaleDateString("id-ID"),
-        },
     ];
 
     return (
@@ -128,7 +148,7 @@ export default function FilmManagement({ films: initialFilms }) {   // ← Terim
                 </div>
 
                 <DataTable
-                    data={films}
+                    data={filmsWithNo}     
                     columns={columns}
                     onCreate={handleCreate}
                     onEdit={handleEdit}

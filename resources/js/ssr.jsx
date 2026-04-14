@@ -2,7 +2,9 @@ import { createInertiaApp } from '@inertiajs/react';
 import createServer from '@inertiajs/react/server';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
-import { route } from '../../vendor/tightenco/ziggy';
+// 1. Ganti import dari vendor ke file yang baru kamu generate
+import { route } from 'ziggy-js';
+import { Ziggy } from './ziggy.js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -17,9 +19,11 @@ createServer((page) =>
                 import.meta.glob('./Pages/**/*.jsx'),
             ),
         setup: ({ App, props }) => {
+            // 2. Gunakan objek Ziggy yang diimport dari ./ziggy.js
             global.route = (name, params, absolute) =>
                 route(name, params, absolute, {
                     ...page.props.ziggy,
+                    ...Ziggy, // Tambahkan ini sebagai fallback
                     location: new URL(page.props.ziggy.location),
                 });
 

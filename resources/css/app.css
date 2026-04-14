@@ -1,9 +1,8 @@
+@import './explicit.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import explicit styling untuk memastikan semua terlihat */
-@import './explicit.css';
 
 /* Magic Bean logo background fix - Only for Magic Bean logos */
 img[src*="/Asset/Magic Bean/"] {

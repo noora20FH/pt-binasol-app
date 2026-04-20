@@ -11,6 +11,7 @@ import {
     Menu,
     X,
     Search,
+    Building2,
 } from "lucide-react";
 
 import { Link, usePage } from '@inertiajs/react';
@@ -36,6 +37,7 @@ export default function AdminLayout({
         { id: "orders", label: "Orders & Penjualan", icon: ShoppingCart, href: "/admin/orders" },
         { id: "team", label: "Tim", icon: Users, href: "/admin/team-members" },
         { id: "carousel", label: "Carousel", icon: ImageIcon, href: "/admin/carousel-slides" },
+        { id: "sewa-ruangan", label: "Sewa Ruangan", icon: Building2, href: "/admin/rooms" },
     ];
 
     return (

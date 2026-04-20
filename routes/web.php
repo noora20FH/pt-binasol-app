@@ -11,7 +11,8 @@ use App\Http\Controllers\CarouselSlideController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\AdminController;          // ← already added, good
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +38,9 @@ Route::get('/products/search', [ProductController::class, 'search'])->name('prod
 // Films
 Route::get('/films', [FilmController::class, 'index'])->name('films.index');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
+
+// Sewa Ruangan
+Route::get('/sewa-ruangan', [RoomController::class, 'index'])->name('rooms.index');
 
 // Shopping Cart
 Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
@@ -66,27 +70,57 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/films', \App\Http\Controllers\Admin\FilmController::class)
         ->names('admin.films');
 
-    // Retail & Construction Products (halaman yang sedang kamu kerjakan)
-    Route::get('/admin/retail-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'retail']);
-    })->name('admin.retail-products');
+    // === Products (Retail & Construction) ===
+    Route::get('/admin/retail-products', [\App\Http\Controllers\Admin\ProductController::class, 'index'])
+        ->defaults('type', 'retail')
+        ->name('admin.retail-products');
+    Route::get('/admin/construction-products', [\App\Http\Controllers\Admin\ProductController::class, 'index'])
+        ->defaults('type', 'construction')
+        ->name('admin.construction-products');
+    Route::post('/admin/products', [\App\Http\Controllers\Admin\ProductController::class, 'store'])
+        ->name('admin.products.store');
+    Route::put('/admin/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update'])
+        ->name('admin.products.update');
+    Route::delete('/admin/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy'])
+        ->name('admin.products.destroy');
+    Route::delete('/admin/product-images/{image}', [\App\Http\Controllers\Admin\ProductController::class, 'destroyImage'])
+        ->name('admin.product-images.destroy');
 
-    Route::get('/admin/construction-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'construction']);
-    })->name('admin.construction-products');
+    // === Orders ===
+    Route::get('/admin/orders', [\App\Http\Controllers\Admin\OrderController::class, 'index'])
+        ->name('admin.orders');
+    Route::delete('/admin/orders/{order}', [\App\Http\Controllers\Admin\OrderController::class, 'destroy'])
+        ->name('admin.orders.destroy');
 
-    Route::get('/admin/construction-products', function () {
-        return Inertia::render('Admin/ProductManagement', ['type' => 'construction']);
-    })->name('admin.construction-products');
-    Route::get('/admin/orders', function () {
-        return Inertia::render('Admin/OrderManagement');
-    })->name('admin.orders');
-    Route::get('/admin/team-members', function () {
-        return Inertia::render('Admin/TeamManagement');
-    })->name('admin.team-members');
-    Route::get('/admin/carousel-slides', function () {
-        return Inertia::render('Admin/CarouselManagement');
-    })->name('admin.carousel-slides');
+    // === Team Members ===
+    Route::get('/admin/team-members', [\App\Http\Controllers\Admin\TeamMemberController::class, 'index'])
+        ->name('admin.team-members');
+    Route::post('/admin/team-members', [\App\Http\Controllers\Admin\TeamMemberController::class, 'store'])
+        ->name('admin.team-members.store');
+    Route::post('/admin/team-members/{teamMember}', [\App\Http\Controllers\Admin\TeamMemberController::class, 'update'])
+        ->name('admin.team-members.update');
+    Route::delete('/admin/team-members/{teamMember}', [\App\Http\Controllers\Admin\TeamMemberController::class, 'destroy'])
+        ->name('admin.team-members.destroy');
+
+    // === Carousel Slides ===
+    Route::get('/admin/carousel-slides', [\App\Http\Controllers\Admin\CarouselSlideController::class, 'index'])
+        ->name('admin.carousel-slides');
+    Route::post('/admin/carousel-slides', [\App\Http\Controllers\Admin\CarouselSlideController::class, 'store'])
+        ->name('admin.carousel-slides.store');
+    Route::post('/admin/carousel-slides/{carouselSlide}', [\App\Http\Controllers\Admin\CarouselSlideController::class, 'update'])
+        ->name('admin.carousel-slides.update');
+    Route::delete('/admin/carousel-slides/{carouselSlide}', [\App\Http\Controllers\Admin\CarouselSlideController::class, 'destroy'])
+        ->name('admin.carousel-slides.destroy');
+
+    // === Sewa Ruangan (Room Management) ===
+    Route::get('/admin/rooms', [\App\Http\Controllers\Admin\RoomController::class, 'index'])
+        ->name('admin.rooms');
+    Route::post('/admin/rooms', [\App\Http\Controllers\Admin\RoomController::class, 'store'])
+        ->name('admin.rooms.store');
+    Route::post('/admin/rooms/{room}', [\App\Http\Controllers\Admin\RoomController::class, 'update'])
+        ->name('admin.rooms.update');
+    Route::delete('/admin/rooms/{room}', [\App\Http\Controllers\Admin\RoomController::class, 'destroy'])
+        ->name('admin.rooms.destroy');
 });
 
 require __DIR__ . '/auth.php';

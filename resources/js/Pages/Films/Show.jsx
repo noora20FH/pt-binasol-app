@@ -102,13 +102,13 @@ export default function FilmShow({ film, featuredFilms }) {
                             </div>
 
                             {/* Cast */}
-                            {film.filmCasts && film.filmCasts.length > 0 && (
+                            {film.castMembers && film.castMembers.length > 0 && (
                                 <div className="mb-8 md:mb-12">
                                     <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 mb-4 md:mb-6">
                                         Pemain
                                     </h2>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
-                                        {film.filmCasts.slice(0, 6).map((cast) => (
+                                        {film.castMembers.slice(0, 6).map((cast) => (
                                             <div key={cast.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
                                                 {cast.image && (
                                                     <div className="h-32 sm:h-40 md:h-48 bg-secondary-100">

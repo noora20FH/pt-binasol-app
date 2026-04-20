@@ -128,11 +128,8 @@ export default function ProductsIndex({ products: initialProducts }) {
                             {/* Pagination */}
                             {initialProducts.links && initialProducts.links.length > 3 && (
                                 <div className="flex justify-center items-center space-x-2 mt-10">
-                                    {initialProducts.links.map((link, index) => {
-                                        const label = link.label
-                                            .replace(/pagination\.previous/i, '« Sebelumnya')
-                                            .replace(/pagination\.next/i, 'Selanjutnya »');
-                                        return link.url ? (
+                                    {initialProducts.links.map((link, index) => (
+                                        link.url ? (
                                             <Link
                                                 key={index}
                                                 href={link.url}
@@ -141,16 +138,16 @@ export default function ProductsIndex({ products: initialProducts }) {
                                                         ? 'bg-primary-500 text-white'
                                                         : 'bg-white border border-secondary-300 hover:bg-secondary-50'
                                                 }`}
-                                                dangerouslySetInnerHTML={{ __html: label }}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
                                         ) : (
                                             <span
                                                 key={index}
                                                 className="px-2 py-2 text-secondary-400"
-                                                dangerouslySetInnerHTML={{ __html: label }}
+                                                dangerouslySetInnerHTML={{ __html: link.label }}
                                             />
-                                        );
-                                    })}
+                                        )
+                                    ))}
                                 </div>
                             )}
                         </>

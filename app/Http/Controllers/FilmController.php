@@ -2,228 +2,153 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Film;
-use App\Models\Episode;
-use App\Models\FilmPlatform;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
-public function index()
-{
-    $films = Film::with(['castMembers', 'episodes', 'platforms'])   // ← diperbaiki
-        ->orderBy('created_at', 'desc')
-        ->get()
-        ->map(function ($film) {
-            return [
-                'id'          => $film->id,
-                'title'       => $film->title,
-                'description' => $film->description,
-                'genres'      => $film->genres,
-                'rating'      => $film->rating,
-                'year'        => $film->year,
-                'poster'      => $film->poster ? Storage::url($film->poster) : null,
-                'banner'      => $film->banner ? Storage::url($film->banner) : null,
-                'is_featured' => $film->is_featured,
-
-                // Episodes (clean, tanpa platforms)
-                'episodes' => $film->episodes->map(fn($ep) => [
-                    'id'       => $ep->id,
-                    'number'   => $ep->number,
-                    'title'    => $ep->title,
-                    'duration' => $ep->duration,
-                ]),
-
-                // Platforms (baru - per Film)
-                'platforms' => $film->platforms->map(fn($p) => [
-                    'platform_name' => $p->platform_name,
-                    'url'           => $p->url,
-                ]),
-            ];
-        });
-
-    return inertia('Admin/FilmManagement', [
-        'films' => $films,
-    ]);
-}
-    private function scanPosters(string $dir, string $urlPrefix): array
+    public function index(Request $request)
     {
-        if (!is_dir($dir)) return [];
+        $perPage = 12; // sesuaikan dengan kebutuhan tampilan grid
 
-        // Index films by poster path for quick lookup
-        $filmsByPoster = Film::select('id', 'title', 'description', 'genres', 'year', 'rating', 'poster', 'banner')
-            ->get()
-            ->keyBy(fn($f) => ltrim($f->poster, '/'));
+        // FILM (Movie) → tidak memiliki episode
+        $filmPosters = Film::whereDoesntHave('episodes')
+            ->select('id', 'title', 'poster')
+            ->orderBy('year', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'film_page', $request->get('film_page', 1))
+            ->through(fn($film) => [
+                'film_id' => $film->id,
+                'title'   => $film->title,
+                'url'     => $film->poster ? Storage::url($film->poster) : null,
+            ]);
 
-        $extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-        $files = [];
+        // SERIES → memiliki episode
+        $seriesPosters = Film::whereHas('episodes')
+            ->select('id', 'title', 'poster')
+            ->orderBy('year', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'series_page', $request->get('series_page', 1))
+            ->through(fn($film) => [
+                'film_id' => $film->id,
+                'title'   => $film->title,
+                'url'     => $film->poster ? Storage::url($film->poster) : null,
+            ]);
 
-        foreach (scandir($dir) as $file) {
-            if ($file === '.' || $file === '..') continue;
-            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-            if (!in_array($ext, $extensions)) continue;
-
-            $name = pathinfo($file, PATHINFO_FILENAME);
-            $posterKey = ltrim($urlPrefix, '/') . $file;
-            $film = $filmsByPoster->get($posterKey);
-
-            $files[] = [
-                'filename'    => $file,
-                'title'       => $film ? $film->title : ucwords(str_replace(['-', '_'], ' ', $name)),
-                'url'         => $urlPrefix . rawurlencode($file),
-                'description' => $film?->description,
-                'genres'      => $film?->genres,
-                'year'        => $film?->year,
-                'rating'      => $film?->rating,
-                'banner'      => $film?->banner,
-                'film_id'     => $film?->id,
-            ];
-        }
-
-        return $files;
+        return Inertia::render('Films/Index', [
+            'filmPosters'   => $filmPosters,
+            'seriesPosters' => $seriesPosters,
+        ]);
     }
 
-    public function show(Film $film)
+    public function create()
     {
-        // Updated load relations sesuai database baru
-        $film->load(['castMembers', 'episodes', 'platforms']);
-
-        $featuredFilms = Film::where('is_featured', true)
-            ->where('id', '!=', $film->id)
-            ->limit(4)
-            ->get();
-
-        return inertia('Films/Show', [
-            'film' => $film,
-            'featuredFilms' => $featuredFilms,
-        ]);
+        return Inertia::render('Admin/FilmManagement', ['films' => [], 'mode' => 'create']);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'genres' => 'nullable|string',
-            'rating' => 'nullable|numeric|min:0|max:10',
-            'year' => 'nullable|integer',
+            'genres'      => 'nullable|string',
+            'rating'      => 'nullable|numeric|min:0|max:10',
+            'year'        => 'nullable|integer',
+            'poster'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'banner'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'is_featured' => 'boolean',
-            'poster' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
-            'episodes' => 'nullable|json',
-            'platforms' => 'nullable|array',
-            'platforms.*.platform_name' => 'required|string|max:255',
-            'platforms.*.url' => 'required|url|max:500',
         ]);
-
-        // Handle file upload poster & banner
-        if ($request->hasFile('poster')) {
-            $validated['poster'] = $request->file('poster')->store('posters', 'public');
-        }
-        if ($request->hasFile('banner')) {
-            $validated['banner'] = $request->file('banner')->store('banners', 'public');
-        }
 
         $film = Film::create($validated);
 
-        // === EPISODES ===
+        // Upload poster & banner
+        if ($request->hasFile('poster')) {
+            $film->poster = $request->file('poster')->store('films/posters', 'public');
+        }
+        if ($request->hasFile('banner')) {
+            $film->banner = $request->file('banner')->store('films/banners', 'public');
+        }
+        $film->save();
+
+        // === CASTS (sudah aman) ===
+        if ($request->filled('casts') && is_array($request->casts)) {
+            foreach ($request->casts as $cast) {
+                $film->castMembers()->create($cast);
+            }
+        }
+
+        // === EPISODES (PERBAIKAN UTAMA) ===
         if ($request->filled('episodes')) {
-            $episodes = json_decode($request->episodes, true) ?? [];
-            foreach ($episodes as $ep) {
-                if (!empty($ep['title'])) {
-                    $film->episodes()->create([
-                        'number'   => $ep['number'] ?? 1,
-                        'title'    => $ep['title'],
-                        'duration' => $ep['duration'] ?? null,
-                        'thumbnail' => $ep['thumbnail'] ?? null,
-                    ]);
+            $episodesData = $request->episodes;
+
+            // Handle kalau data berupa string JSON atau array
+            if (is_string($episodesData)) {
+                $episodesData = json_decode($episodesData, true);
+            }
+
+            if (is_array($episodesData)) {
+                foreach ($episodesData as $ep) {
+                    $episode = $film->episodes()->create($ep);
+
+                    // Platforms
+                    if (isset($ep['platforms']) && is_array($ep['platforms'])) {
+                        foreach ($ep['platforms'] as $platform) {
+                            $episode->platforms()->create($platform);
+                        }
+                    }
                 }
             }
         }
 
-        // === PLATFORMS (BARU - per Film) ===
-        if ($request->has('platforms')) {
-            foreach ($request->input('platforms') as $platform) {
-                $film->platforms()->create([
-                    'platform_name' => $platform['platform_name'],
-                    'url'           => $platform['url'],
-                ]);
-            }
-        }
-
         return redirect()->route('admin.films.index')
-            ->with('success', 'Film berhasil ditambahkan');
+            ->with('success', 'Film berhasil ditambahkan!');
+    }
+
+    public function edit(Film $film)
+    {
+        $film->load(['castMembers', 'episodes.platforms']);
+
+        return Inertia::render('Admin/FilmManagement', [
+            'film'  => $film,
+            'mode'  => 'edit',
+            'films' => [],
+        ]);
     }
 
     public function update(Request $request, Film $film)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'genres' => 'nullable|string',
-            'rating' => 'nullable|numeric|min:0|max:10',
-            'year' => 'nullable|integer',
+            'genres'      => 'nullable|string',
+            'rating'      => 'nullable|numeric|min:0|max:10',
+            'year'        => 'nullable|integer',
+            'poster'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'banner'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'is_featured' => 'boolean',
-            'poster' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:8192',
-            'episodes' => 'nullable|json',
-            'platforms' => 'nullable|array',
-            'platforms.*.platform_name' => 'required|string|max:255',
-            'platforms.*.url' => 'required|url|max:500',
         ]);
-
-        // Handle file upload poster & banner (replace old file)
-        if ($request->hasFile('poster')) {
-            if ($film->poster) Storage::disk('public')->delete($film->poster);
-            $validated['poster'] = $request->file('poster')->store('posters', 'public');
-        }
-        if ($request->hasFile('banner')) {
-            if ($film->banner) Storage::disk('public')->delete($film->banner);
-            $validated['banner'] = $request->file('banner')->store('banners', 'public');
-        }
 
         $film->update($validated);
 
-        // === EPISODES (hapus lama, buat baru) ===
-        $film->episodes()->delete();
-        if ($request->filled('episodes')) {
-            $episodes = json_decode($request->episodes, true) ?? [];
-            foreach ($episodes as $ep) {
-                if (!empty($ep['title'])) {
-                    $film->episodes()->create([
-                        'number'   => $ep['number'] ?? 1,
-                        'title'    => $ep['title'],
-                        'duration' => $ep['duration'] ?? null,
-                    ]);
-                }
-            }
+        if ($request->hasFile('poster')) {
+            $film->poster = $request->file('poster')->store('films/posters', 'public');
         }
-
-        // === PLATFORMS (hapus lama, buat baru) ===
-        $film->platforms()->delete();
-        if ($request->has('platforms')) {
-            foreach ($request->input('platforms') as $platform) {
-                $film->platforms()->create([
-                    'platform_name' => $platform['platform_name'],
-                    'url'           => $platform['url'],
-                ]);
-            }
+        if ($request->hasFile('banner')) {
+            $film->banner = $request->file('banner')->store('films/banners', 'public');
         }
+        $film->save();
 
         return redirect()->route('admin.films.index')
-            ->with('success', 'Film berhasil diupdate');
+            ->with('success', 'Film berhasil diperbarui!');
     }
 
     public function destroy(Film $film)
     {
-        // Optional: hapus file poster & banner
-        if ($film->poster) Storage::disk('public')->delete($film->poster);
-        if ($film->banner) Storage::disk('public')->delete($film->banner);
-
         $film->delete();
-
         return redirect()->route('admin.films.index')
-            ->with('success', 'Film berhasil dihapus');
+            ->with('success', 'Film berhasil dihapus!');
     }
 }

@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
         ->name('admin.dashboard');
 
     // === Perfilman (Film Management) ===
-    Route::resource('admin/films', \App\Http\Controllers\Admin\FilmController::class)
+    Route::resource('admin/films', \App\Http\Controllers\Admin\AdminFilmController::class)
         ->names('admin.films');
 
     // === Retail & Construction Products (FULL CRUD) ===

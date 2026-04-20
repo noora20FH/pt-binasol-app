@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import FilmForm from "@/Components/admin/FilmForm";
+import FilmForm from "@/Pages/Admin/FilmForm";
 import { DataTable } from '@/Components/cms/DataTable';
 import { router } from '@inertiajs/react';
 
@@ -148,7 +148,7 @@ export default function FilmManagement({ films: initialFilms }) {
                 </div>
 
                 <DataTable
-                    data={filmsWithNo}     
+                    data={filmsWithNo}
                     columns={columns}
                     onCreate={handleCreate}
                     onEdit={handleEdit}

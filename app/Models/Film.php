@@ -11,8 +11,14 @@ class Film extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title', 'description', 'genres', 'rating', 'year',
-        'poster', 'banner', 'is_featured',
+        'title',
+        'description',
+        'genres',
+        'rating',
+        'year',
+        'poster',
+        'banner',
+        'is_featured',
     ];
 
     protected $casts = [
@@ -20,7 +26,6 @@ class Film extends Model
         'is_featured' => 'boolean',
     ];
 
-    // ← DIUBAH
     public function castMembers()
     {
         return $this->hasMany(Cast::class);
@@ -29,5 +34,11 @@ class Film extends Model
     public function episodes()
     {
         return $this->hasMany(Episode::class);
+    }
+
+    // ← Ubah menjadi camelCase (best practice Laravel)
+    public function filmPlatforms()
+    {
+        return $this->hasMany(FilmPlatform::class);
     }
 }

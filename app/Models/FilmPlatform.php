@@ -4,18 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cast extends Model
+class FilmPlatform extends Model
 {
-    use HasFactory, SoftDeletes;
-    protected $table = 'casts';
+    use HasFactory;
+
+    protected $table = 'film_platforms';
 
     protected $fillable = [
         'film_id',
-        'name',
-        'role',
-        'image',
+        'platform_name',
+        'url',
     ];
 
     public function film()

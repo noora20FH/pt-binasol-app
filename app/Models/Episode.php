@@ -23,8 +23,5 @@ class Episode extends Model
         return $this->belongsTo(Film::class);
     }
 
-    public function platforms()
-    {
-        return $this->hasMany(EpisodePlatform::class);
-    }
+
 }

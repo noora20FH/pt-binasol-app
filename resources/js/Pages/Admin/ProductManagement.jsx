@@ -4,7 +4,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 
 import { DataTable, StatusBadge } from "@/Components/cms/DataTable";
 
-import { ProductForm } from "@/Components/cms/ProductForm";
+import ProductForm from "@/Pages/Admin/ProductForm";
 
 import { router } from "@inertiajs/react";
 
@@ -23,7 +23,9 @@ export default function ProductManagement({
     const title = type === "retail" ? "Produk Retail" : "Produk Konstruksi";
 
     const sortedProducts = useMemo(() => {
-        return [...products].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        return [...products].sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at),
+        );
     }, [products]);
 
     const productsWithNo = sortedProducts.map((product, index) => ({
@@ -45,32 +47,49 @@ export default function ProductManagement({
         formData.append("type", type);
 
         if (productData.specifications?.length) {
-            formData.append("specifications", JSON.stringify(productData.specifications));
+            formData.append(
+                "specifications",
+                JSON.stringify(productData.specifications),
+            );
         }
 
         if (productData.images?.length) {
             productData.images.forEach((img, index) => {
                 if (img.file instanceof File) {
                     formData.append(`images[${index}][file]`, img.file);
-                    formData.append(`images[${index}][is_primary]`, img.is_primary ? "1" : "0");
+                    formData.append(
+                        `images[${index}][is_primary]`,
+                        img.is_primary ? "1" : "0",
+                    );
                 } else if (img.id) {
-                    // Untuk gambar existing saat edit (agar tidak hilang)
                     formData.append(`images[${index}][id]`, img.id);
-                    formData.append(`images[${index}][is_primary]`, img.is_primary ? "1" : "0");
+                    formData.append(
+                        `images[${index}][is_primary]`,
+                        img.is_primary ? "1" : "0",
+                    );
                 }
             });
         }
 
-        const options = {
-            forceFormData: true,
-            onSuccess: () => setView("list"),
-            onError: (errors) => console.error("Validation errors:", errors),
-        };
+        if (view === "edit" && selectedProduct) {
+            formData.append("_method", "PUT");
 
-        if (view === "create") {
-            router.post(route("admin.products.store"), formData, options);
-        } else if (view === "edit" && selectedProduct) {
-            router.put(route("admin.products.update", selectedProduct.id), formData, options);
+            router.post(
+                route("admin.products.update", selectedProduct.id),
+                formData,
+                {
+                    forceFormData: true,
+                    onSuccess: () => setView("list"),
+                    onError: (errors) =>
+                        console.error("Update errors:", errors),
+                },
+            );
+        } else {
+            router.post(route("admin.products.store"), formData, {
+                forceFormData: true,
+                onSuccess: () => setView("list"),
+                onError: (errors) => console.error("Store errors:", errors),
+            });
         }
     };
 
@@ -104,7 +123,9 @@ export default function ProductManagement({
     const ProductDetailModal = () => {
         if (!viewingProduct) return null;
 
-        const primaryImage = viewingProduct.images?.find((img) => img.is_primary) || viewingProduct.images?.[0];
+        const primaryImage =
+            viewingProduct.images?.find((img) => img.is_primary) ||
+            viewingProduct.images?.[0];
 
         return (
             <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] p-4">
@@ -113,7 +134,9 @@ export default function ProductManagement({
                     <div className="px-8 py-5 border-b flex items-center justify-between bg-gray-50">
                         <div className="flex items-center gap-3">
                             <Eye className="w-6 h-6 text-[#D98344]" />
-                            <h2 className="text-2xl font-bold text-gray-900">{viewingProduct.name}</h2>
+                            <h2 className="text-2xl font-bold text-gray-900">
+                                {viewingProduct.name}
+                            </h2>
                         </div>
                         <button
                             onClick={() => setShowDetailModal(false)}
@@ -129,9 +152,13 @@ export default function ProductManagement({
                             <div className="lg:col-span-5">
                                 {/* Gambar Utama */}
                                 {primaryImage && (
-                                    <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden border border-gray-200 mb-6">
+                                    <div className="aspect-square ...">
                                         <img
-                                            src={primaryImage.image_path}
+                                            src={
+                                                primaryImage.image_path
+                                                    ? `/storage/${primaryImage.image_path}`
+                                                    : "/placeholder.jpg"
+                                            }
                                             alt={viewingProduct.name}
                                             className="w-full h-full object-cover"
                                         />
@@ -139,29 +166,38 @@ export default function ProductManagement({
                                 )}
 
                                 {/* Gallery Gambar */}
-                                {viewingProduct.images && viewingProduct.images.length > 0 && (
-                                    <div>
-                                        <p className="text-sm font-medium text-gray-500 mb-3">Semua Gambar</p>
-                                        <div className="grid grid-cols-4 gap-3">
-                                            {viewingProduct.images.map((img, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                                                        img.is_primary
-                                                            ? "border-[#D98344] shadow-md"
-                                                            : "border-transparent hover:border-gray-300"
-                                                    }`}
-                                                >
-                                                    <img
-                                                        src={img.image_path}
-                                                        alt=""
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                            ))}
+                                {viewingProduct.images &&
+                                    viewingProduct.images.length > 0 && (
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-500 mb-3">
+                                                Semua Gambar
+                                            </p>
+                                            <div className="grid grid-cols-4 gap-3">
+                                                {viewingProduct.images.map(
+                                                    (img, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
+                                                                img.is_primary
+                                                                    ? "border-[#D98344] shadow-md"
+                                                                    : "border-transparent hover:border-gray-300"
+                                                            }`}
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    img.image_path
+                                                                        ? `/storage/${img.image_path}`
+                                                                        : "/placeholder.jpg"
+                                                                }
+                                                                alt=""
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
 
                             {/* Informasi Detail */}
@@ -181,25 +217,37 @@ export default function ProductManagement({
 
                                     <div className="flex items-baseline gap-4">
                                         <p className="text-4xl font-bold text-[#D98344]">
-                                            Rp {parseInt(viewingProduct.price).toLocaleString("id-ID")}
+                                            Rp{" "}
+                                            {parseInt(
+                                                viewingProduct.price,
+                                            ).toLocaleString("id-ID")}
                                         </p>
                                         {viewingProduct.original_price && (
                                             <p className="text-xl text-gray-400 line-through">
-                                                Rp {parseInt(viewingProduct.original_price).toLocaleString("id-ID")}
+                                                Rp{" "}
+                                                {parseInt(
+                                                    viewingProduct.original_price,
+                                                ).toLocaleString("id-ID")}
                                             </p>
                                         )}
                                     </div>
 
                                     <p className="text-sm text-gray-500 mt-1">
                                         Kategori:{" "}
-                                        {categories.find((c) => c.id === viewingProduct.category_id)?.name || "-"}
+                                        {categories.find(
+                                            (c) =>
+                                                c.id ===
+                                                viewingProduct.category_id,
+                                        )?.name || "-"}
                                     </p>
                                 </div>
 
                                 {/* Deskripsi */}
                                 {viewingProduct.description && (
                                     <div>
-                                        <h4 className="font-semibold text-gray-700 mb-2">Deskripsi</h4>
+                                        <h4 className="font-semibold text-gray-700 mb-2">
+                                            Deskripsi
+                                        </h4>
                                         <p className="text-gray-600 leading-relaxed">
                                             {viewingProduct.description}
                                         </p>
@@ -207,19 +255,32 @@ export default function ProductManagement({
                                 )}
 
                                 {/* Spesifikasi */}
-                                {viewingProduct.specifications && viewingProduct.specifications.length > 0 && (
-                                    <div>
-                                        <h4 className="font-semibold text-gray-700 mb-3">Spesifikasi</h4>
-                                        <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-                                            {viewingProduct.specifications.map((spec, idx) => (
-                                                <div key={idx} className="flex justify-between border-b pb-2">
-                                                    <span className="font-medium text-gray-600">{spec.property}</span>
-                                                    <span className="text-gray-900">{spec.value}</span>
-                                                </div>
-                                            ))}
+                                {viewingProduct.specifications &&
+                                    viewingProduct.specifications.length >
+                                        0 && (
+                                        <div>
+                                            <h4 className="font-semibold text-gray-700 mb-3">
+                                                Spesifikasi
+                                            </h4>
+                                            <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                                                {viewingProduct.specifications.map(
+                                                    (spec, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className="flex justify-between border-b pb-2"
+                                                        >
+                                                            <span className="font-medium text-gray-600">
+                                                                {spec.property}
+                                                            </span>
+                                                            <span className="text-gray-900">
+                                                                {spec.value}
+                                                            </span>
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
                         </div>
                     </div>
@@ -253,7 +314,9 @@ export default function ProductManagement({
     if (view === "create" || view === "edit") {
         return (
             <AdminLayout
-                title={view === "create" ? `Tambah ${title} Baru` : `Edit ${title}`}
+                title={
+                    view === "create" ? `Tambah ${title} Baru` : `Edit ${title}`
+                }
                 activeTab={type === "retail" ? "retail" : "konstruksi"}
             >
                 <ProductForm
@@ -273,55 +336,75 @@ export default function ProductManagement({
         {
             key: "display_no",
             label: "ID",
-            render: (value) => <span className="font-medium">#{value}</span>
+            render: (value) => <span className="font-medium">#{value}</span>,
         },
         {
-            key: 'images',
-            label: 'GAMBAR',
-            render: (value) =>
-                value && value.length > 0 ? (
+            key: "images",
+            label: "GAMBAR",
+            render: (images) => {
+                if (!images || images.length === 0) {
+                    return (
+                        <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs">
+                            No Image
+                        </div>
+                    );
+                }
+                const primary =
+                    images.find((img) => img.is_primary) || images[0];
+                return (
                     <img
-                        src={value.find((img) => img.is_primary)?.image_path || value[0].image_path}
+                        src={`/storage/${primary.image_path}`}
                         alt="Product"
                         className="w-16 h-16 object-cover rounded-lg shadow-sm"
                     />
-                ) : (
-                    <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs">
-                        No Image
-                    </div>
-                ),
-        },
-        {
-            key: 'category_id',
-            label: 'KATEGORI',
-            render: (value) => {
-                const category = categories.find((c) => c.id === value);
-                return <span className="text-sm">{category?.name || '-'}</span>;
+                );
             },
         },
-        { key: 'name', label: 'NAMA PRODUK', render: (value) => <span className="font-medium">{value}</span> },
         {
-            key: 'price',
-            label: 'HARGA',
+            key: "category_id",
+            label: "KATEGORI",
+            render: (value) => {
+                const category = categories.find((c) => c.id === value);
+                return <span className="text-sm">{category?.name || "-"}</span>;
+            },
+        },
+        {
+            key: "name",
+            label: "NAMA PRODUK",
+            render: (value) => <span className="font-medium">{value}</span>,
+        },
+        {
+            key: "price",
+            label: "HARGA",
             render: (value) => (
-                <span className="font-medium text-green-600">Rp {value?.toLocaleString('id-ID')}</span>
+                <span className="font-medium text-green-600">
+                    Rp {value?.toLocaleString("id-ID")}
+                </span>
             ),
         },
         {
-            key: 'stock',
-            label: 'STOK',
+            key: "stock",
+            label: "STOK",
             render: (value) => (
-                <span className={value > 10 ? 'text-green-600 font-medium' : value > 0 ? 'text-amber-500 font-medium' : 'text-red-600 font-medium'}>
+                <span
+                    className={
+                        value > 10
+                            ? "text-green-600 font-medium"
+                            : value > 0
+                              ? "text-amber-500 font-medium"
+                              : "text-red-600 font-medium"
+                    }
+                >
                     {value}
                 </span>
             ),
         },
         {
-            key: 'created_at',
-            label: 'DIBUAT',
+            key: "created_at",
+            label: "DIBUAT",
             render: (value) => (
                 <span className="text-xs text-gray-500">
-                    {new Date(value).toLocaleDateString('id-ID')}
+                    {new Date(value).toLocaleDateString("id-ID")}
                 </span>
             ),
         },
@@ -335,8 +418,12 @@ export default function ProductManagement({
             <div className="max-w-screen-2xl mx-auto">
                 {/* Header tetap sama */}
                 <div className="mb-6">
-                    <h1 className="text-3xl font-bold text-gray-900">Manajemen {title}</h1>
-                    <p className="text-gray-600 mt-1">Kelola data produk, spesifikasi, dan gambar</p>
+                    <h1 className="text-3xl font-bold text-gray-900">
+                        Manajemen {title}
+                    </h1>
+                    <p className="text-gray-600 mt-1">
+                        Kelola data produk, spesifikasi, dan gambar
+                    </p>
                 </div>
 
                 <DataTable

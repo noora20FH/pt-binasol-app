@@ -11,7 +11,8 @@ use App\Http\Controllers\CarouselSlideController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\AdminController;          // ← already added, good
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +38,9 @@ Route::get('/products/search', [ProductController::class, 'search'])->name('prod
 // Films
 Route::get('/films', [FilmController::class, 'index'])->name('films.index');
 Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show');
+
+// Sewa Ruangan
+Route::get('/sewa-ruangan', [RoomController::class, 'index'])->name('rooms.index');
 
 // Shopping Cart
 Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');

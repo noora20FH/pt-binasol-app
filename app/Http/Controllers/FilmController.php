@@ -12,41 +12,63 @@ class FilmController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = 12; // sesuaikan dengan kebutuhan tampilan grid
+        $filmPage  = $request->get('film_page', 1);
+        $seriesPage = $request->get('series_page', 1);
 
-        // FILM (Movie) → tidak memiliki episode
-        $filmPosters = Film::whereDoesntHave('episodes')
-            ->select('id', 'title', 'poster')
-            ->orderBy('year', 'desc')
+        // Film (tidak punya episodes) — pakai is_featured untuk membedakan
+        // Kita bedakan: film = tidak punya episodes, series = punya episodes
+        // Karena tidak ada kolom type, kita kirim semua sebagai filmPosters
+        $allFilms = Film::select('id', 'title', 'poster', 'is_featured')
+            ->withCount('episodes')
+            ->orderBy('is_featured', 'desc')
             ->orderBy('created_at', 'desc')
-            ->paginate($perPage, ['*'], 'film_page', $request->get('film_page', 1))
-            ->through(fn($film) => [
-                'film_id' => $film->id,
-                'title'   => $film->title,
-                'url'     => $film->poster ? Storage::url($film->poster) : null,
-            ]);
+            ->paginate(20, ['*'], 'film_page', $filmPage);
 
-        // SERIES → memiliki episode
-        $seriesPosters = Film::whereHas('episodes')
-            ->select('id', 'title', 'poster')
-            ->orderBy('year', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage, ['*'], 'series_page', $request->get('series_page', 1))
-            ->through(fn($film) => [
-                'film_id' => $film->id,
-                'title'   => $film->title,
-                'url'     => $film->poster ? Storage::url($film->poster) : null,
-            ]);
+        $filmPosters = [
+            'data' => $allFilms->filter(fn($f) => $f->episodes_count === 0)->values()->map(fn($f) => [
+                'film_id'  => $f->id,
+                'title'    => $f->title,
+                'url'      => $f->poster ? \Illuminate\Support\Facades\Storage::url($f->poster) : null,
+                'filename' => $f->id,
+            ])->values(),
+            'total'        => $allFilms->filter(fn($f) => $f->episodes_count === 0)->count(),
+            'current_page' => $allFilms->currentPage(),
+            'last_page'    => $allFilms->lastPage(),
+            'per_page'     => $allFilms->perPage(),
+        ];
 
-        return Inertia::render('Films/Index', [
+        $seriesPosters = [
+            'data' => $allFilms->filter(fn($f) => $f->episodes_count > 0)->values()->map(fn($f) => [
+                'film_id'  => $f->id,
+                'title'    => $f->title,
+                'url'      => $f->poster ? \Illuminate\Support\Facades\Storage::url($f->poster) : null,
+                'filename' => $f->id,
+            ])->values(),
+            'total'        => $allFilms->filter(fn($f) => $f->episodes_count > 0)->count(),
+            'current_page' => 1,
+            'last_page'    => 1,
+            'per_page'     => 20,
+        ];
+
+        return inertia('Films/Index', [
             'filmPosters'   => $filmPosters,
             'seriesPosters' => $seriesPosters,
         ]);
     }
 
-    public function create()
+    public function show(Film $film)
     {
-        return Inertia::render('Admin/FilmManagement', ['films' => [], 'mode' => 'create']);
+        $film->load(['castMembers', 'episodes.platforms']);
+
+        $featuredFilms = Film::where('is_featured', true)
+            ->where('id', '!=', $film->id)
+            ->limit(4)
+            ->get();
+
+        return inertia('Films/Show', [
+            'film' => $film,
+            'featuredFilms' => $featuredFilms,
+        ]);
     }
 
     public function store(Request $request)

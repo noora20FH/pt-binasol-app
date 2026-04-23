@@ -11,6 +11,7 @@ export default function Navigation() {
         { label: 'Kategori', href: '/categories' },
         { label: 'Produk', href: '/products' },
         { label: 'Film', href: '/films' },
+        { label: 'Sewa Ruangan', href: '/sewa-ruangan' },
         { label: 'Tentang Kami', href: '/about' },
         { label: 'Kontak', href: '/contact' },
     ];

@@ -55,6 +55,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/sewa-ruangan" className="text-secondary-300 hover:text-primary-400 transition">
+                                    Sewa Ruangan
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/about" className="text-secondary-300 hover:text-primary-400 transition">
                                     Tentang Kami
                                 </Link>

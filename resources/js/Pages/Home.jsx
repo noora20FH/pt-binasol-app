@@ -130,19 +130,19 @@ export default function Home({ slides, categories, featuredProducts, featuredFil
                                 href={`/categories/${category.slug}`}
                                 className="group"
                             >
-                                <div className={`relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64 ${category.is_logo ? 'bg-white' : 'bg-gradient-to-br from-gray-400 to-gray-600'}`}>
+                                <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition h-64 bg-gradient-to-br from-gray-400 to-gray-600">
                                     {category.image && (
                                         <img
                                             src={encodeURI(category.image)}
                                             alt={category.name}
-                                            className={`w-full h-full transition duration-300 group-hover:scale-110 ${category.is_logo ? 'object-contain p-6' : 'object-cover'}`}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
                                             loading="lazy"
                                             onError={(e) => {
                                                 e.target.style.display = 'none';
                                             }}
                                         />
                                     )}
-                                    <div className={`absolute inset-0 transition ${category.is_logo ? 'bg-black/20 group-hover:bg-black/30' : 'bg-black/30 group-hover:bg-black/50'}`} />
+                                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition" />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                                         <h3 className="text-2xl font-bold text-center">
                                             {category.name}
@@ -169,7 +169,7 @@ export default function Home({ slides, categories, featuredProducts, featuredFil
                     <h2 className="text-4xl font-bold text-center mb-12 text-secondary-900">
                         Produk Unggulan
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {featuredProducts.map((product) => (
                             <Link
                                 key={product.id}

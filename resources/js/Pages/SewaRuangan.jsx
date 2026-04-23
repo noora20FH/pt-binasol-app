@@ -1,20 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PublicLayout from '@/Layouts/PublicLayout';
-import { Check, Users, Wifi, Coffee, AirVent, Clock, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+import PublicLayout from "@/Layouts/PublicLayout";
+import {
+    Check,
+    Users,
+    Wifi,
+    Coffee,
+    AirVent,
+    Clock,
+    MapPin,
+    ChevronLeft,
+    ChevronRight,
+} from "lucide-react";
 
 // ─── Hero Carousel ────────────────────────────────────────────────────────────
 function HeroCarousel({ rooms }) {
     const [current, setCurrent] = useState(0);
     const timerRef = useRef(null);
 
-    const slides = rooms.length > 0 ? rooms : [
-        {
-            id: 0,
-            name: 'Ruang Meeting Executive',
-            image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80',
-            description: 'Solusi sempurna untuk rapat bisnis Anda dengan fasilitas premium',
-        },
-    ];
+    const slides =
+        rooms.length > 0
+            ? rooms
+            : [
+                  {
+                      id: 0,
+                      name: "Ruang Meeting Executive",
+                      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&q=80",
+                      description:
+                          "Solusi sempurna untuk rapat bisnis Anda dengan fasilitas premium",
+                  },
+              ];
 
     const startTimer = () => {
         clearInterval(timerRef.current);
@@ -28,7 +42,10 @@ function HeroCarousel({ rooms }) {
         return () => clearInterval(timerRef.current);
     }, [slides.length]);
 
-    const goTo = (idx) => { setCurrent(idx); startTimer(); };
+    const goTo = (idx) => {
+        setCurrent(idx);
+        startTimer();
+    };
     const prev = () => goTo((current - 1 + slides.length) % slides.length);
     const next = () => goTo((current + 1) % slides.length);
 
@@ -43,47 +60,19 @@ function HeroCarousel({ rooms }) {
                         src={slide.image}
                         alt={slide.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = 'none'; }}
+                        onError={(e) => {
+                            e.target.style.display = "none";
+                        }}
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-slate-900/80" />
+
+                {/* Overlay yang sudah dipudarkan */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-900/40 to-transparent" />
             </div>
 
             {/* Content */}
-            <div className="relative h-full flex items-center">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-                    <div className="max-w-3xl">
-                        <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/20">
-                            <MapPin className="w-4 h-4 text-amber-400" />
-                            <span className="text-sm text-white">Lokasi Strategis di Pusat Kota</span>
-                        </div>
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-white leading-tight">
-                            {slide.name}
-                        </h1>
-                        {slide.description && (
-                            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
-                                {slide.description}
-                            </p>
-                        )}
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <a
-                                href="#ruangan"
-                                className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-semibold rounded-lg shadow-lg transition text-sm sm:text-base"
-                            >
-                                Lihat Detail Ruangan
-                            </a>
-                            <a
-                                href="/contact"
-                                className="inline-flex items-center justify-center px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/30 text-white hover:bg-white/20 font-semibold rounded-lg transition text-sm sm:text-base"
-                            >
-                                Hubungi Kami
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             {/* Controls */}
             {slides.length > 1 && (
@@ -105,7 +94,7 @@ function HeroCarousel({ rooms }) {
                             <button
                                 key={i}
                                 onClick={() => goTo(i)}
-                                className={`rounded-full transition-all ${i === current ? 'w-6 h-2.5 bg-amber-400' : 'w-2.5 h-2.5 bg-white/50 hover:bg-white/80'}`}
+                                className={`rounded-full transition-all ${i === current ? "w-6 h-2.5 bg-amber-400" : "w-2.5 h-2.5 bg-white/50 hover:bg-white/80"}`}
                             />
                         ))}
                     </div>
@@ -132,7 +121,9 @@ function RoomCard({ room }) {
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center">
-                        <span className="text-slate-500 text-sm">Tidak ada gambar</span>
+                        <span className="text-slate-500 text-sm">
+                            Tidak ada gambar
+                        </span>
                     </div>
                 )}
                 {room.type && (
@@ -141,7 +132,9 @@ function RoomCard({ room }) {
                     </div>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 sm:p-5">
-                    <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{room.name}</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
+                        {room.name}
+                    </h3>
                     <div className="flex items-center gap-4 text-white/90 text-xs sm:text-sm">
                         {room.capacity && (
                             <div className="flex items-center gap-1">
@@ -176,7 +169,10 @@ function RoomCard({ room }) {
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                             {room.facilities.map((facility, i) => (
-                                <div key={i} className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
+                                <div
+                                    key={i}
+                                    className="flex items-center gap-2 text-xs sm:text-sm text-slate-600"
+                                >
                                     <div className="w-1.5 h-1.5 rounded-full bg-amber-600 flex-shrink-0" />
                                     <span>{facility}</span>
                                 </div>
@@ -188,7 +184,9 @@ function RoomCard({ room }) {
                 {/* CTA */}
                 <div className="mt-auto pt-4 border-t border-slate-200 flex items-center justify-between gap-4">
                     {room.price_unit && (
-                        <span className="text-xs text-slate-500 italic">{room.price_unit}</span>
+                        <span className="text-xs text-slate-500 italic">
+                            {room.price_unit}
+                        </span>
                     )}
                     <a
                         href="/contact"
@@ -205,10 +203,26 @@ function RoomCard({ room }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function SewaRuangan({ rooms = [] }) {
     const features = [
-        { icon: Wifi, title: 'WiFi Super Cepat', desc: 'Koneksi internet fiber optic hingga 100 Mbps untuk mendukung aktivitas Anda' },
-        { icon: AirVent, title: 'AC Premium', desc: 'Sistem pendingin udara terbaik untuk kenyamanan maksimal sepanjang hari' },
-        { icon: Coffee, title: 'Coffee & Snack', desc: 'Tersedia coffee break dan area pantry untuk kenyamanan meeting Anda' },
-        { icon: Clock, title: 'Fleksibel 24/7', desc: 'Booking kapan saja dengan sistem pemesanan yang mudah dan cepat' },
+        {
+            icon: Wifi,
+            title: "WiFi Super Cepat",
+            desc: "Koneksi internet fiber optic hingga 100 Mbps untuk mendukung aktivitas Anda",
+        },
+        {
+            icon: AirVent,
+            title: "AC Premium",
+            desc: "Sistem pendingin udara terbaik untuk kenyamanan maksimal sepanjang hari",
+        },
+        {
+            icon: Coffee,
+            title: "Coffee & Snack",
+            desc: "Tersedia coffee break dan area pantry untuk kenyamanan meeting Anda",
+        },
+        {
+            icon: Clock,
+            title: "Fleksibel 24/7",
+            desc: "Booking kapan saja dengan sistem pemesanan yang mudah dan cepat",
+        },
     ];
 
     return (
@@ -224,14 +238,24 @@ export default function SewaRuangan({ rooms = [] }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
                         {[
-                            { value: rooms.length > 0 ? `${rooms.length}+` : '6+', label: 'Jenis Ruangan' },
-                            { value: '150+', label: 'Kapasitas Maksimal' },
-                            { value: '24/7', label: 'Layanan Tersedia' },
-                            { value: '500+', label: 'Klien Puas' },
+                            {
+                                value:
+                                    rooms.length > 0
+                                        ? `${rooms.length}+`
+                                        : "6+",
+                                label: "Jenis Ruangan",
+                            },
+                            { value: "150+", label: "Kapasitas Maksimal" },
+                            { value: "24/7", label: "Layanan Tersedia" },
+                            { value: "500+", label: "Klien Puas" },
                         ].map((stat, i) => (
                             <div key={i} className="text-center">
-                                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-600 mb-1 sm:mb-2">{stat.value}</div>
-                                <div className="text-slate-600 text-xs sm:text-sm">{stat.label}</div>
+                                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-600 mb-1 sm:mb-2">
+                                    {stat.value}
+                                </div>
+                                <div className="text-slate-600 text-xs sm:text-sm">
+                                    {stat.label}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -246,7 +270,8 @@ export default function SewaRuangan({ rooms = [] }) {
                             Pilihan Ruangan Kami
                         </h2>
                         <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto">
-                            Berbagai pilihan ruangan dengan fasilitas premium untuk memenuhi kebutuhan acara dan rapat Anda
+                            Berbagai pilihan ruangan dengan fasilitas premium
+                            untuk memenuhi kebutuhan acara dan rapat Anda
                         </p>
                     </div>
 
@@ -258,8 +283,13 @@ export default function SewaRuangan({ rooms = [] }) {
                         </div>
                     ) : (
                         <div className="text-center py-16">
-                            <p className="text-slate-500 text-lg mb-4">Belum ada ruangan yang tersedia saat ini.</p>
-                            <a href="/contact" className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition font-semibold">
+                            <p className="text-slate-500 text-lg mb-4">
+                                Belum ada ruangan yang tersedia saat ini.
+                            </p>
+                            <a
+                                href="/contact"
+                                className="inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition font-semibold"
+                            >
                                 Hubungi Kami untuk Informasi
                             </a>
                         </div>
@@ -275,7 +305,8 @@ export default function SewaRuangan({ rooms = [] }) {
                             Mengapa Memilih Kami?
                         </h2>
                         <p className="text-sm sm:text-base md:text-lg text-slate-600 max-w-2xl mx-auto">
-                            Keunggulan dan kemudahan yang Anda dapatkan saat menyewa ruangan bersama kami
+                            Keunggulan dan kemudahan yang Anda dapatkan saat
+                            menyewa ruangan bersama kami
                         </p>
                     </div>
 
@@ -283,12 +314,19 @@ export default function SewaRuangan({ rooms = [] }) {
                         {features.map((feat, i) => {
                             const Icon = feat.icon;
                             return (
-                                <div key={i} className="bg-white p-5 sm:p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200">
+                                <div
+                                    key={i}
+                                    className="bg-white p-5 sm:p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200"
+                                >
                                     <div className="bg-amber-100 w-12 h-12 sm:w-14 sm:h-14 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
                                         <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-amber-700" />
                                     </div>
-                                    <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">{feat.title}</h3>
-                                    <p className="text-xs sm:text-sm text-slate-600">{feat.desc}</p>
+                                    <h3 className="font-semibold text-slate-900 mb-2 text-sm sm:text-base">
+                                        {feat.title}
+                                    </h3>
+                                    <p className="text-xs sm:text-sm text-slate-600">
+                                        {feat.desc}
+                                    </p>
                                 </div>
                             );
                         })}
@@ -303,7 +341,8 @@ export default function SewaRuangan({ rooms = [] }) {
                         Siap Untuk Memesan Ruangan?
                     </h2>
                     <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto">
-                        Hubungi kami sekarang untuk mendapatkan penawaran terbaik dan konsultasi gratis
+                        Hubungi kami sekarang untuk mendapatkan penawaran
+                        terbaik dan konsultasi gratis
                     </p>
                     <a
                         href="/contact"

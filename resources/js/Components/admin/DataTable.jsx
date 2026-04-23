@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Search, Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from '../../hooks/useInertiaForm.jsx';   // ← diperbaiki .tsx → .jsx
+import { Link } from '@inertiajs/react';
 
-// TIDAK ADA LAGI interface / generic TypeScript
 export function DataTable({
   data = [],
   columns = [],
@@ -21,7 +20,6 @@ export function DataTable({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Filter data based on search query
   const filteredData = searchable
     ? data.filter((row) =>
         Object.values(row).some((value) =>
@@ -30,7 +28,6 @@ export function DataTable({
       )
     : data;
 
-  // Pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
@@ -39,7 +36,6 @@ export function DataTable({
 
   return (
     <div className="bg-white rounded-lg shadow">
-      {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {searchable && (
@@ -68,7 +64,6 @@ export function DataTable({
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
@@ -111,43 +106,28 @@ export function DataTable({
                       <div className="flex items-center justify-end gap-2">
                         {(onView || viewHref) && (
                           viewHref ? (
-                            <Link
-                              href={viewHref(row)}
-                              className="text-blue-600 hover:text-blue-900"
-                            >
+                            <Link href={viewHref(row)} className="text-blue-600 hover:text-blue-900">
                               <Eye className="w-5 h-5" />
                             </Link>
                           ) : (
-                            <button
-                              onClick={() => onView?.(row)}
-                              className="text-blue-600 hover:text-blue-900"
-                            >
+                            <button onClick={() => onView?.(row)} className="text-blue-600 hover:text-blue-900">
                               <Eye className="w-5 h-5" />
                             </button>
                           )
                         )}
                         {(onEdit || editHref) && (
                           editHref ? (
-                            <Link
-                              href={editHref(row)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
+                            <Link href={editHref(row)} className="text-indigo-600 hover:text-indigo-900">
                               <Edit className="w-5 h-5" />
                             </Link>
                           ) : (
-                            <button
-                              onClick={() => onEdit?.(row)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
+                            <button onClick={() => onEdit?.(row)} className="text-indigo-600 hover:text-indigo-900">
                               <Edit className="w-5 h-5" />
                             </button>
                           )
                         )}
                         {onDelete && (
-                          <button
-                            onClick={() => onDelete(row)}
-                            className="text-red-600 hover:text-red-900"
-                          >
+                          <button onClick={() => onDelete(row)} className="text-red-600 hover:text-red-900">
                             <Trash2 className="w-5 h-5" />
                           </button>
                         )}
@@ -161,7 +141,6 @@ export function DataTable({
         </table>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-700">
@@ -193,7 +172,6 @@ export function DataTable({
   );
 }
 
-// Badge component for status indicators (sudah diubah jadi pure JS)
 export function StatusBadge({ status, type = 'default' }) {
   const colors = {
     default: 'bg-gray-100 text-gray-800',
@@ -204,7 +182,7 @@ export function StatusBadge({ status, type = 'default' }) {
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type]}`}>
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colors[type] || colors.default}`}>
       {status}
     </span>
   );

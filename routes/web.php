@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-/* ======================== ADMIN SECTION ======================== */
+    /* ======================== ADMIN SECTION ======================== */
 
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
@@ -74,21 +74,24 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         // Index Pages
         Route::get('/retail-products', [\App\Http\Controllers\Admin\ProductController::class, 'indexRetail'])
-             ->name('retail-products');
+            ->name('retail-products');
 
         Route::get('/construction-products', [\App\Http\Controllers\Admin\ProductController::class, 'indexConstruction'])
-             ->name('construction-products');
+            ->name('construction-products');
 
         // CRUD Products
         Route::post('/products', [\App\Http\Controllers\Admin\ProductController::class, 'store'])
-             ->name('products.store');
+            ->name('products.store');
 
         Route::put('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'update'])
-             ->name('products.update');
+            ->name('products.update');
 
         Route::delete('/products/{product}', [\App\Http\Controllers\Admin\ProductController::class, 'destroy'])
-             ->name('products.destroy');
+            ->name('products.destroy');
     });
+    // Di dalam middleware auth group
+    Route::resource('admin/rooms', \App\Http\Controllers\Admin\RoomController::class)
+        ->names('admin.rooms');
 
     // === Lainnya ===
     Route::get('/admin/orders', function () {

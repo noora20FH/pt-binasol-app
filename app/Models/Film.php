@@ -39,6 +39,6 @@ class Film extends Model
     // ← Ubah menjadi camelCase (best practice Laravel)
     public function filmPlatforms()
     {
-        return $this->hasMany(FilmPlatform::class);
+        return $this->hasMany(FilmPlatform::class);   // Laravel otomatis pakai film_id
     }
 }

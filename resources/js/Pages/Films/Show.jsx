@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link } from '@inertiajs/react';
-import PublicLayout from '@/Layouts/PublicLayout';
-import { Star, Calendar, Play } from 'lucide-react';
+// resources/js/Pages/Films/Show.jsx
+import React from "react";
+import { Link } from "@inertiajs/react";
+import PublicLayout from "@/Layouts/PublicLayout";
+import { Star, Calendar, Play, ExternalLink } from "lucide-react";
 
 export default function FilmShow({ film, featuredFilms }) {
     return (
@@ -18,7 +19,8 @@ export default function FilmShow({ film, featuredFilms }) {
                             alt={film.title}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"%3E%3Crect fill="%23333" width="1200" height="600"/%3E%3Ctext x="50%25" y="50%25" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3EBanner%3C/text%3E%3C/svg%3E';
+                                e.target.src =
+                                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"%3E%3Crect fill="%23333" width="1200" height="600"/%3E%3Ctext x="50%25" y="50%25" font-size="24" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3EBanner%3C/text%3E%3C/svg%3E';
                             }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
@@ -36,7 +38,8 @@ export default function FilmShow({ film, featuredFilms }) {
                                         alt={film.title}
                                         className="w-full rounded-lg shadow-2xl"
                                         onError={(e) => {
-                                            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="450"%3E%3Crect fill="%23e0e0e0" width="300" height="450"/%3E%3Ctext x="50%25" y="50%25" font-size="14" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3ENo Poster%3C/text%3E%3C/svg%3E';
+                                            e.target.src =
+                                                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="450"%3E%3Crect fill="%23e0e0e0" width="300" height="450"/%3E%3Ctext x="50%25" y="50%25" font-size="14" fill="%23999" text-anchor="middle" dominant-baseline="middle"%3ENo Poster%3C/text%3E%3C/svg%3E';
                                         }}
                                     />
                                 )}
@@ -66,19 +69,62 @@ export default function FilmShow({ film, featuredFilms }) {
                                 </div>
 
                                 {film.genres && (
-                                    <div className="flex flex-wrap gap-2 mb-4 text-xs sm:text-sm">
-                                        {film.genres.split(',').slice(0, 3).map((genre, i) => (
-                                            <span key={i} className="px-2 md:px-3 py-1 bg-primary-500/30 rounded">
-                                                {genre.trim()}
-                                            </span>
-                                        ))}
+                                    <div className="flex flex-wrap gap-2 mb-6 text-xs sm:text-sm">
+                                        {film.genres
+                                            .split(",")
+                                            .slice(0, 3)
+                                            .map((genre, i) => (
+                                                <span
+                                                    key={i}
+                                                    className="px-2 md:px-3 py-1 bg-primary-500/30 rounded"
+                                                >
+                                                    {genre.trim()}
+                                                </span>
+                                            ))}
                                     </div>
                                 )}
 
-                                <button className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-primary-500 hover:bg-primary-600 rounded-lg font-bold text-sm sm:text-base transition-colors">
-                                    <Play className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" />
-                                    <span>Tonton</span>
-                                </button>
+                                {/* === TONTON DI PLATFORM (Hero Section) === */}
+                                {film.film_platforms &&
+                                    film.film_platforms.length > 0 && (
+                                        <div className="flex flex-wrap gap-3">
+                                            {film.film_platforms.map(
+                                                (platform) => (
+                                                    <a
+                                                        key={platform.id}
+                                                        href={platform.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-gray-100 rounded-xl font-semibold transition-all group shadow-md"
+                                                    >
+                                                        <Play
+                                                            className="w-5 h-5 group-hover:scale-110 transition"
+                                                            fill="currentColor"
+                                                        />
+                                                        Tonton di{" "}
+                                                        <span className="font-medium">
+                                                            {
+                                                                platform.platform_name
+                                                            }
+                                                        </span>
+                                                        <ExternalLink className="w-4 h-4 opacity-70" />
+                                                    </a>
+                                                ),
+                                            )}
+                                        </div>
+                                    )}
+
+                                {/* Fallback jika tidak ada platform */}
+                                {(!film.film_platforms ||
+                                    film.film_platforms.length === 0) && (
+                                    <button className="flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-xl font-bold text-sm sm:text-base transition-colors">
+                                        <Play
+                                            className="w-5 h-5"
+                                            fill="currentColor"
+                                        />
+                                        <span>Tonton Sekarang</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -102,41 +148,54 @@ export default function FilmShow({ film, featuredFilms }) {
                             </div>
 
                             {/* Cast */}
-                            {film.castMembers && film.castMembers.length > 0 && (
-                                <div className="mb-8 md:mb-12">
-                                    <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 mb-4 md:mb-6">
-                                        Pemain
-                                    </h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
-                                        {film.castMembers.slice(0, 6).map((cast) => (
-                                            <div key={cast.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                                                {cast.image && (
-                                                    <div className="h-32 sm:h-40 md:h-48 bg-secondary-100">
-                                                        <img
-                                                            src={cast.image}
-                                                            alt={cast.name}
-                                                            className="w-full h-full object-cover"
-                                                            onError={(e) => {
-                                                                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="240"%3E%3Crect fill="%23e0e0e0" width="200" height="240"/%3E%3C/svg%3E';
-                                                            }}
-                                                        />
+                            {film.castMembers &&
+                                film.castMembers.length > 0 && (
+                                    <div className="mb-8 md:mb-12">
+                                        <h2 className="text-2xl md:text-3xl font-bold text-secondary-900 mb-4 md:mb-6">
+                                            Pemain
+                                        </h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6">
+                                            {film.castMembers
+                                                .slice(0, 6)
+                                                .map((cast) => (
+                                                    <div
+                                                        key={cast.id}
+                                                        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition"
+                                                    >
+                                                        {cast.image && (
+                                                            <div className="h-32 sm:h-40 md:h-48 bg-secondary-100">
+                                                                <img
+                                                                    src={
+                                                                        cast.image
+                                                                    }
+                                                                    alt={
+                                                                        cast.name
+                                                                    }
+                                                                    className="w-full h-full object-cover"
+                                                                    onError={(
+                                                                        e,
+                                                                    ) => {
+                                                                        e.target.src =
+                                                                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="240"%3E%3Crect fill="%23e0e0e0" width="200" height="240"/%3E%3C/svg%3E';
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        <div className="p-3 md:p-4">
+                                                            <h4 className="font-semibold text-secondary-900 text-sm md:text-base line-clamp-2">
+                                                                {cast.name}
+                                                            </h4>
+                                                            {cast.role && (
+                                                                <p className="text-primary-600 text-xs md:text-sm mt-1">
+                                                                    {cast.role}
+                                                                </p>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                )}
-                                                <div className="p-3 md:p-4">
-                                                    <h4 className="font-semibold text-secondary-900 text-sm md:text-base line-clamp-2">
-                                                        {cast.name}
-                                                    </h4>
-                                                    {cast.role && (
-                                                        <p className="text-primary-600 text-xs md:text-sm mt-1">
-                                                            {cast.role}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
+                                                ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
 
                             {/* Episodes */}
                             {film.episodes && film.episodes.length > 0 && (
@@ -146,28 +205,19 @@ export default function FilmShow({ film, featuredFilms }) {
                                     </h2>
                                     <div className="space-y-4">
                                         {film.episodes.map((episode) => (
-                                            <div key={episode.id} className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition">
+                                            <div
+                                                key={episode.id}
+                                                className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition"
+                                            >
                                                 <h4 className="font-semibold text-secondary-900 text-sm md:text-base">
-                                                    Episode {episode.number}: {episode.title}
+                                                    Episode {episode.number}:{" "}
+                                                    {episode.title}
                                                 </h4>
                                                 <div className="flex flex-wrap items-center gap-2 mt-2 text-secondary-600 text-xs md:text-sm">
                                                     {episode.duration && (
-                                                        <span>{episode.duration}</span>
-                                                    )}
-                                                    {episode.platforms && episode.platforms.length > 0 && (
-                                                        <div className="flex flex-wrap gap-2">
-                                                            {episode.platforms.map((platform) => (
-                                                                <a
-                                                                    key={platform.id}
-                                                                    href={platform.url}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="px-2 md:px-3 py-1 bg-primary-100 text-primary-700 rounded text-xs font-semibold hover:bg-primary-200 transition"
-                                                                >
-                                                                    {platform.platform_name}
-                                                                </a>
-                                                            ))}
-                                                        </div>
+                                                        <span>
+                                                            {episode.duration}
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -185,6 +235,7 @@ export default function FilmShow({ film, featuredFilms }) {
                                 </h3>
 
                                 <div className="space-y-4">
+                                    {/* Rating */}
                                     <div>
                                         <span className="text-secondary-600 text-xs md:text-sm block">
                                             Rating
@@ -194,9 +245,12 @@ export default function FilmShow({ film, featuredFilms }) {
                                                 <Star
                                                     key={i}
                                                     className={`w-4 h-4 md:w-5 md:h-5 ${
-                                                        i < Math.floor(film.rating / 2)
-                                                            ? 'text-yellow-400 fill-current'
-                                                            : 'text-secondary-300'
+                                                        i <
+                                                        Math.floor(
+                                                            film.rating / 2,
+                                                        )
+                                                            ? "text-yellow-400 fill-current"
+                                                            : "text-secondary-300"
                                                     }`}
                                                 />
                                             ))}
@@ -208,6 +262,7 @@ export default function FilmShow({ film, featuredFilms }) {
 
                                     <hr />
 
+                                    {/* Tahun Rilis */}
                                     {film.year && (
                                         <div>
                                             <span className="text-secondary-600 text-xs md:text-sm block mb-2">
@@ -219,15 +274,18 @@ export default function FilmShow({ film, featuredFilms }) {
                                         </div>
                                     )}
 
+                                    <hr />
+
+                                    {/* Genre */}
                                     {film.genres && (
-                                        <>
-                                            <hr />
-                                            <div>
-                                                <span className="text-secondary-600 text-xs md:text-sm block mb-2">
-                                                    Genre
-                                                </span>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {film.genres.split(',').map((genre, i) => (
+                                        <div>
+                                            <span className="text-secondary-600 text-xs md:text-sm block mb-2">
+                                                Genre
+                                            </span>
+                                            <div className="flex flex-wrap gap-2">
+                                                {film.genres
+                                                    .split(",")
+                                                    .map((genre, i) => (
                                                         <span
                                                             key={i}
                                                             className="px-2 md:px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-xs md:text-sm font-semibold"
@@ -235,16 +293,10 @@ export default function FilmShow({ film, featuredFilms }) {
                                                             {genre.trim()}
                                                         </span>
                                                     ))}
-                                                </div>
                                             </div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
-
-                                <button className="w-full mt-6 md:mt-8 px-4 py-2 md:py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-bold text-sm md:text-base transition-colors flex items-center justify-center gap-2">
-                                    <Play className="w-4 h-4 md:w-5 md:h-5" fill="currentColor" />
-                                    <span>Tonton</span>
-                                </button>
                             </div>
                         </aside>
                     </div>
@@ -273,7 +325,8 @@ export default function FilmShow({ film, featuredFilms }) {
                                                     alt={relatedFilm.title}
                                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                     onError={(e) => {
-                                                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="300"%3E%3Crect fill="%23e0e0e0" width="200" height="300"/%3E%3C/svg%3E';
+                                                        e.target.src =
+                                                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="300"%3E%3Crect fill="%23e0e0e0" width="200" height="300"/%3E%3C/svg%3E';
                                                     }}
                                                 />
                                             </div>

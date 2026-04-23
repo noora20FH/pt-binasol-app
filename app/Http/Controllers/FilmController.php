@@ -58,7 +58,11 @@ class FilmController extends Controller
 
     public function show(Film $film)
     {
-        $film->load(['castMembers', 'episodes.platforms']);
+        $film->load([
+            'castMembers',
+            'episodes',           // tanpa .platforms
+            'filmPlatforms'       // ← ini yang penting
+        ]);
 
         $featuredFilms = Film::where('is_featured', true)
             ->where('id', '!=', $film->id)
@@ -98,7 +102,7 @@ class FilmController extends Controller
         // === CASTS (sudah aman) ===
         if ($request->filled('casts') && is_array($request->casts)) {
             foreach ($request->casts as $cast) {
-                $film->castMembers()->create($cast);
+                $film->casts()->create($cast);
             }
         }
 
@@ -131,7 +135,7 @@ class FilmController extends Controller
 
     public function edit(Film $film)
     {
-        $film->load(['castMembers', 'episodes.platforms']);
+        $film->load(['casts', 'episodes.platforms']);
 
         return Inertia::render('Admin/FilmManagement', [
             'film'  => $film,

@@ -181,17 +181,30 @@ function RoomCard({ room }) {
                     </div>
                 )}
 
-                {/* CTA */}
+                {/* CTA - WhatsApp */}
                 <div className="mt-auto pt-4 border-t border-slate-200 flex items-center justify-between gap-4">
                     {room.price_unit && (
                         <span className="text-xs text-slate-500 italic">
                             {room.price_unit}
                         </span>
                     )}
+
                     <a
-                        href="/contact"
-                        className="ml-auto inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-semibold rounded-lg shadow-md transition text-sm"
+                        href={`https://wa.me/6289513822017?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20tertarik%20untuk%20menyewa%20ruangan%20*${encodeURIComponent(room.name)}*. Mohon%20informasi%20lebih%20lanjut%20dan%20ketersediaannya.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-semibold rounded-lg shadow-md transition text-sm"
                     >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.485-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                            <path d="M12 2C6.48 2 2 6.59 2 12.253c0 2.8 1.15 5.35 3.02 7.2L3 22l2.72-1.01c1.72.95 3.68 1.5 5.75 1.5 5.52 0 10-4.59 10-10.247S17.52 2 12 2zm0 18.25c-1.85 0-3.65-.52-5.2-1.5l-.37-.22-3.85 1.43 1.45-3.8-.24-.37C2.8 14.3 2 13.2 2 12.253 2 7.7 6.48 3.25 12 3.25s10 4.45 10 9.003c0 4.55-4.48 9-10 9z" />
+                        </svg>
                         Pesan Sekarang
                     </a>
                 </div>
@@ -333,8 +346,7 @@ export default function SewaRuangan({ rooms = [] }) {
                     </div>
                 </div>
             </section>
-
-            {/* CTA */}
+            {/* CTA - WhatsApp */}
             <section className="bg-gradient-to-r from-amber-600 to-orange-700 py-12 sm:py-16 lg:py-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
@@ -344,11 +356,25 @@ export default function SewaRuangan({ rooms = [] }) {
                         Hubungi kami sekarang untuk mendapatkan penawaran
                         terbaik dan konsultasi gratis
                     </p>
+
                     <a
-                        href="/contact"
-                        className="inline-flex items-center justify-center px-8 py-3 bg-white text-amber-700 hover:bg-slate-50 font-semibold rounded-lg shadow-xl transition text-sm sm:text-base"
+                        href="https://wa.me/6289513822017?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20ingin%20mendapatkan%20informasi%20dan%20penawaran%20sewa%20ruangan.%20Terima%20kasih."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-amber-700 hover:bg-slate-50 font-semibold rounded-xl shadow-xl transition-all text-sm sm:text-base gap-3 group"
                     >
-                        Hubungi Kami Sekarang
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-6 h-6 text-[#25D366] group-hover:scale-110 transition-transform"
+                        >
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.485-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                            <path d="M12 2C6.48 2 2 6.59 2 12.253c0 2.8 1.15 5.35 3.02 7.2L3 22l2.72-1.01c1.72.95 3.68 1.5 5.75 1.5 5.52 0 10-4.59 10-10.247S17.52 2 12 2zm0 18.25c-1.85 0-3.65-.52-5.2-1.5l-.37-.22-3.85 1.43 1.45-3.8-.24-.37C2.8 14.3 2 13.2 2 12.253 2 7.7 6.48 3.25 12 3.25s10 4.45 10 9.003c0 4.55-4.48 9-10 9z" />
+                        </svg>
+                        <span>Hubungi via WhatsApp</span>
                     </a>
                 </div>
             </section>

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import FilmForm from "@/Pages/Admin/FilmForm";
-import { DataTable } from '@/Components/cms/DataTable';
-import { router } from '@inertiajs/react';
-import { X, Calendar, Star, Play, ExternalLink } from 'lucide-react';
+import { DataTable } from "@/Components/cms/DataTable";
+import { router } from "@inertiajs/react";
+import { X, Calendar, Star, Play, ExternalLink } from "lucide-react";
 
 export default function FilmManagement({ films: initialFilms }) {
     const [view, setView] = useState("list");
@@ -34,11 +34,15 @@ export default function FilmManagement({ films: initialFilms }) {
 
     // Handle Delete (Soft Delete)
     const handleDelete = (film) => {
-        if (confirm(`Yakin ingin menghapus film "${film.title}"? (Data akan masuk sampah)`)) {
-            router.delete(route('admin.films.destroy', film.id), {
+        if (
+            confirm(
+                `Yakin ingin menghapus film "${film.title}"? (Data akan masuk sampah)`,
+            )
+        ) {
+            router.delete(route("admin.films.destroy", film.id), {
                 onSuccess: () => {
-                    setFilms(prev => prev.filter(f => f.id !== film.id));
-                }
+                    setFilms((prev) => prev.filter((f) => f.id !== film.id));
+                },
             });
         }
     };
@@ -69,7 +73,9 @@ export default function FilmManagement({ films: initialFilms }) {
                     {/* Header Modal */}
                     <div className="px-8 py-5 border-b flex items-center justify-between bg-gray-50">
                         <div className="flex items-center gap-3">
-                            <h2 className="text-2xl font-semibold text-gray-900">{viewingFilm.title}</h2>
+                            <h2 className="text-2xl font-semibold text-gray-900">
+                                {viewingFilm.title}
+                            </h2>
                         </div>
                         <button
                             onClick={() => setShowDetailModal(false)}
@@ -126,75 +132,138 @@ export default function FilmManagement({ films: initialFilms }) {
                                 </div>
 
                                 <p className="text-gray-700 leading-relaxed text-[15.5px]">
-                                    {viewingFilm.description || 'Tidak ada deskripsi.'}
+                                    {viewingFilm.description ||
+                                        "Tidak ada deskripsi."}
                                 </p>
 
                                 {/* Casts */}
-                                {viewingFilm.casts && viewingFilm.casts.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                                            <span className="text-[#FF751F]">🎭</span> Cast & Pemeran
-                                        </h3>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                            {viewingFilm.casts.map((cast, i) => (
-                                                <div key={i} className="flex items-center gap-3">
-                                                    {cast.image ? (
-                                                        <img src={cast.image} alt={cast.name} className="w-12 h-12 rounded-2xl object-cover" />
-                                                    ) : (
-                                                        <div className="w-12 h-12 bg-gray-200 rounded-2xl flex items-center justify-center text-xl">👤</div>
-                                                    )}
-                                                    <div>
-                                                        <p className="font-medium text-sm">{cast.name}</p>
-                                                        <p className="text-xs text-gray-500">{cast.role || '-'}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Episodes */}
-                                {viewingFilm.episodes && viewingFilm.episodes.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                                            <Play className="w-5 h-5 text-purple-500" /> Episode
-                                        </h3>
-                                        <div className="space-y-2">
-                                            {viewingFilm.episodes.map((episode, i) => (
-                                                <div key={i} className="flex justify-between items-center bg-gray-50 px-5 py-3 rounded-2xl">
-                                                    <div className="flex items-center gap-4">
-                                                        <span className="font-mono text-sm font-medium text-gray-500">E{episode.number}</span>
-                                                        <div>
-                                                            <p className="font-medium">{episode.title}</p>
+                                {viewingFilm.casts &&
+                                    viewingFilm.casts.length > 0 && (
+                                        <div>
+                                            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                                                <span className="text-[#FF751F]">
+                                                    🎭
+                                                </span>{" "}
+                                                Cast & Pemeran
+                                            </h3>
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                                {viewingFilm.casts.map(
+                                                    (cast, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className="flex items-center gap-3"
+                                                        >
+                                                            {cast.image ? (
+                                                                <img
+                                                                    src={
+                                                                        cast.image
+                                                                    }
+                                                                    alt={
+                                                                        cast.name
+                                                                    }
+                                                                    className="w-12 h-12 rounded-2xl object-cover shadow-sm border border-gray-200"
+                                                                    onError={(
+                                                                        e,
+                                                                    ) =>
+                                                                        (e.target.src =
+                                                                            "/images/default-cast.png")
+                                                                    } // fallback jika error
+                                                                />
+                                                            ) : (
+                                                                <div className="w-12 h-12 bg-gray-200 rounded-2xl flex items-center justify-center text-2xl">
+                                                                    👤
+                                                                </div>
+                                                            )}
+                                                            <div>
+                                                                <p className="font-medium text-sm">
+                                                                    {cast.name}
+                                                                </p>
+                                                                <p className="text-xs text-gray-500">
+                                                                    {cast.role ||
+                                                                        "-"}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    {episode.duration && <span className="text-sm text-gray-500">{episode.duration}</span>}
-                                                </div>
-                                            ))}
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
+                                {/* Episodes */}
+                                {viewingFilm.episodes &&
+                                    viewingFilm.episodes.length > 0 && (
+                                        <div>
+                                            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                                                <Play className="w-5 h-5 text-purple-500" />{" "}
+                                                Episode
+                                            </h3>
+                                            <div className="space-y-2">
+                                                {viewingFilm.episodes.map(
+                                                    (episode, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className="flex justify-between items-center bg-gray-50 px-5 py-3 rounded-2xl"
+                                                        >
+                                                            <div className="flex items-center gap-4">
+                                                                <span className="font-mono text-sm font-medium text-gray-500">
+                                                                    E
+                                                                    {
+                                                                        episode.number
+                                                                    }
+                                                                </span>
+                                                                <div>
+                                                                    <p className="font-medium">
+                                                                        {
+                                                                            episode.title
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            {episode.duration && (
+                                                                <span className="text-sm text-gray-500">
+                                                                    {
+                                                                        episode.duration
+                                                                    }
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
 
                                 {/* Platforms */}
-                                {viewingFilm.platforms && viewingFilm.platforms.length > 0 && (
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-4">Tersedia di Platform</h3>
-                                        <div className="flex flex-wrap gap-3">
-                                            {viewingFilm.platforms.map((platform, i) => (
-                                                <a
-                                                    key={i}
-                                                    href={platform.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 hover:border-[#FF751F] rounded-2xl transition-colors"
-                                                >
-                                                    <span className="font-medium">{platform.platform_name}</span>
-                                                    {platform.url && <ExternalLink className="w-4 h-4" />}
-                                                </a>
-                                            ))}
+                                {viewingFilm.platforms &&
+                                    viewingFilm.platforms.length > 0 && (
+                                        <div>
+                                            <h3 className="font-semibold text-lg mb-4">
+                                                Tersedia di Platform
+                                            </h3>
+                                            <div className="flex flex-wrap gap-3">
+                                                {viewingFilm.platforms.map(
+                                                    (platform, i) => (
+                                                        <a
+                                                            key={i}
+                                                            href={platform.url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 hover:border-[#FF751F] rounded-2xl transition-colors"
+                                                        >
+                                                            <span className="font-medium">
+                                                                {
+                                                                    platform.platform_name
+                                                                }
+                                                            </span>
+                                                            {platform.url && (
+                                                                <ExternalLink className="w-4 h-4" />
+                                                            )}
+                                                        </a>
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
                         </div>
                     </div>
@@ -218,12 +287,7 @@ export default function FilmManagement({ films: initialFilms }) {
                 title={view === "create" ? "Tambah Film Baru" : "Edit Film"}
                 activeTab="perfilman"
             >
-                <FilmForm
-                    film={selectedFilm}
-                    mode={view}
-                    onBack={handleBack}
-                    onSave={handleSave}
-                />
+                <FilmForm film={selectedFilm} mode={view} />
             </AdminLayout>
         );
     }
@@ -232,7 +296,7 @@ export default function FilmManagement({ films: initialFilms }) {
         {
             key: "display_no",
             label: "ID",
-            render: (value) => `#${value}`
+            render: (value) => `#${value}`,
         },
         {
             key: "poster",
@@ -250,7 +314,9 @@ export default function FilmManagement({ films: initialFilms }) {
             key: "description",
             label: "DESKRIPSI",
             render: (value) => (
-                <div className="max-w-xs truncate text-sm text-gray-600">{value}</div>
+                <div className="max-w-xs truncate text-sm text-gray-600">
+                    {value}
+                </div>
             ),
         },
         {
@@ -273,9 +339,13 @@ export default function FilmManagement({ films: initialFilms }) {
             label: "UNGGULAN",
             render: (value) =>
                 value ? (
-                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Ya</span>
+                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                        Ya
+                    </span>
                 ) : (
-                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">Tidak</span>
+                    <span className="inline-flex px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full">
+                        Tidak
+                    </span>
                 ),
         },
         {
@@ -290,8 +360,12 @@ export default function FilmManagement({ films: initialFilms }) {
             <div className="max-w-screen-2xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Manajemen Film</h1>
-                        <p className="text-gray-600 mt-1">Kelola data film, cast, dan episode</p>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            Manajemen Film
+                        </h1>
+                        <p className="text-gray-600 mt-1">
+                            Kelola data film, cast, dan episode
+                        </p>
                     </div>
                 </div>
 
@@ -301,7 +375,7 @@ export default function FilmManagement({ films: initialFilms }) {
                     onCreate={handleCreate}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
-                    onView={handleView}           
+                    onView={handleView}
                     createLabel="Tambah Film"
                     searchPlaceholder="Cari film..."
                     emptyMessage="Tidak ada film yang ditemukan"

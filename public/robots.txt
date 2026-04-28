@@ -1,2 +1,14 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /dashboard
+
+# Specify the sitemap
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1
+
+# Request rate
+Request-rate: 1/10s

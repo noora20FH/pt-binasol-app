@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,36 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Role-based methods
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isKaryawanTetap(): bool
+    {
+        return $this->role === 'karyawan_tetap';
+    }
+
+    public function isKaryawanKontrak(): bool
+    {
+        return $this->role === 'karyawan_kontrak';
+    }
+
+    public function isMagang(): bool
+    {
+        return $this->role === 'magang';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
+    }
+
+    public function isEmployee(): bool
+    {
+        return in_array($this->role, ['admin', 'karyawan_tetap', 'karyawan_kontrak', 'magang']);
     }
 }

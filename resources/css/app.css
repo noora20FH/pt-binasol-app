@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Import explicit styling untuk memastikan semua terlihat */
+@import './explicit.css';
+
+/* Magic Bean logo background fix - Only for Magic Bean logos */
+img[src*="/Asset/Magic Bean/"] {
+    background-color: white !important;
+    padding: 8px !important;
+    border-radius: 8px !important;
+    border: 1px solid #e5e7eb !important;
+}

@@ -80,18 +80,28 @@ export default function Login({ status, canResetPassword }) {
                     </label>
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-4 flex items-center justify-between">
+                    <div>
+                        <Link
+                            href={route('register')}
+                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                        >
+                            Belum punya akun? Daftar di sini
+                        </Link>
+                    </div>
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
                             className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                         >
-                            Forgot your password?
+                            Lupa password?
                         </Link>
                     )}
+                </div>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
+                <div className="mt-4 flex items-center justify-end">
+                    <PrimaryButton disabled={processing}>
+                        Login
                     </PrimaryButton>
                 </div>
             </form>

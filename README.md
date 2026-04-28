@@ -1,97 +1,89 @@
-# 🏢 Corporate Website Project (v2.0)
+# PT Bina Auto Solusi
 
-Dokumentasi resmi untuk platform web perusahaan yang dibangun di atas **Laravel 12**. Project ini dirancang untuk skalabilitas, keamanan tingkat tinggi, dan kemudahan pemeliharaan jangka panjang.
-
----
-
-## 🚀 Tech Stack
-
-Project ini menggunakan kombinasi teknologi modern yang memastikan performa frontend yang reaktif namun tetap memiliki backend yang kokoh.
-
-| Komponen | Teknologi | Keterangan |
-| --- | --- | --- |
-| **Node.js:** | [v22.14.0] | Runtime untuk kompilasi asset frontend (Vite/React).
-|**Environment**|	[PHP 8.3.9] |	Versi PHP stabil yang mendukung fitur readonly properties dan types yang lebih ketat.
-| **Backend** | [Laravel 12](https://laravel.com) | Framework PHP terbaru dengan fitur keamanan dan performa tercanggih. |
-| **Frontend** | [React.js](https://reactjs.org) | Library UI untuk antarmuka yang dinamis. |
-| **Bridge** | [Inertia.js](https://inertiajs.com) | Menghubungkan Laravel & React tanpa kerumitan REST API tradisional. |
-| **Starter Kit** | [Laravel Breeze](https://laravel.com/docs/starter-kits) | Sistem autentikasi siap pakai (Login, Register, Profile). |
-| **Styling** | [Tailwind CSS](https://tailwindcss.com) | Framework CSS untuk desain yang konsisten dan responsif. |
+Platform web multi-lini bisnis untuk **PT Bina Auto Solusi** — mencakup katalog produk, film & entertainment, sewa ruangan, dan sistem e-commerce dengan CMS admin yang lengkap.
 
 ---
 
-## 🛠️ Panduan Instalasi
+## Tech Stack
 
-Untuk menyiapkan lingkungan pengembangan, jalankan dua perintah utama berikut:
+**Laravel 12** · **React 18** · **Inertia.js** · **Tailwind CSS** · **MySQL** · **Vite**
 
-### 1. Scaffold Proyek Baru
+---
 
-Membuat proyek dengan Laravel 12 dan mengintegrasikan Laravel Breeze dengan stack React secara otomatis:
+## Fitur Utama
+
+| Fitur | Keterangan |
+|---|---|
+| 🛍️ Katalog Produk | Retail & konstruksi, multi-gambar, spesifikasi, keranjang belanja |
+| 🎬 Film & Series | Poster, cast, episode, link streaming per platform |
+| 🏢 Sewa Ruangan | Carousel hero, grid ruangan, fasilitas, CTA pemesanan |
+| 🛒 E-Commerce | Keranjang session, order, integrasi Midtrans |
+| 🖥️ CMS Admin | CRUD semua konten + upload gambar langsung dari browser |
+| 📱 Responsive | Mobile-first, berjalan di semua ukuran layar |
+| 🔍 SEO | Sitemap XML, meta tags, Open Graph, Schema.org |
+
+---
+
+## Instalasi Cepat
 
 ```bash
-laravel new pt-binasol-app --breeze --stack=react
+# Clone & setup
+git clone <repo-url> && cd pt-binasol-app
+composer install && npm install
+cp .env.example .env && php artisan key:generate
 
+# Database
+php artisan migrate
+php artisan storage:link
+
+# Jalankan
+php artisan serve    # Terminal 1
+npm run dev          # Terminal 2
 ```
 
-### 2. Integrasi Server-side Inertia
+Buka **http://127.0.0.1:8000**
 
-Pastikan adapter server-side terpasang untuk mengelola pengiriman data dari Laravel ke komponen React:
+---
+
+## Struktur Halaman
+
+**Publik:** `/` · `/products` · `/categories` · `/films` · `/sewa-ruangan` · `/about` · `/contact`
+
+**Admin (login required):** `/admin/dashboard` · `/admin/films` · `/admin/retail-products` · `/admin/construction-products` · `/admin/rooms` · `/admin/orders` · `/admin/team-members` · `/admin/carousel-slides`
+
+---
+
+## Buat Akun Admin
 
 ```bash
-composer require inertiajs/inertia-laravel
-
+php artisan tinker
+>>> App\Models\User::create(['name'=>'Admin','email'=>'admin@binasol.com','password'=>bcrypt('password123'),'role'=>'admin','email_verified_at'=>now()]);
 ```
 
 ---
 
-## 💡 Mengapa Laravel 12 Optimal untuk Perusahaan (±50 Karyawan)?
+## Dokumentasi Lengkap
 
-Mengelola infrastruktur IT untuk perusahaan menengah dengan sekitar **50 karyawan** memerlukan keseimbangan antara biaya operasional dan keandalan sistem. Berikut adalah alasan mengapa Laravel 12 adalah pilihan yang tepat:
-
-### 1. Keamanan Data Perusahaan
-
-Dengan 50 karyawan, risiko kebocoran data internal menjadi perhatian utama. Laravel 12 menyediakan perlindungan bawaan terhadap:
-
-* **SQL Injection:** Melalui Eloquent ORM.
-* **Cross-Site Request Forgery (CSRF):** Melalui Middleware otomatis.
-* **Mass Assignment:** Melalui kebijakan `fillable/guarded` pada model.
-
-### 2. Skalabilitas Internal (Resource Efficiency)
-
-Untuk perusahaan ukuran ini, aplikasi biasanya mencakup sistem HR, manajemen cuti, atau CRM internal.
-
-* **Laravel 12** dirancang untuk performa tinggi dengan manajemen memori yang jauh lebih efisien, memastikan sistem tetap ringan meski menangani traffic internal perusahaan yang padat.
-* Implementasi **PHP 8.3.9** menjamin stabilitas sistem yang luar biasa dengan dukungan fitur modern (seperti Readonly Classes dan Typed Constants) yang mempercepat eksekusi kode secara signifikan tanpa mengorbankan keamanan.
-
-### 3. Kemudahan Pemeliharaan (Maintenance)
-
-Dengan tim IT yang mungkin tidak terlalu besar, standarisasi kode sangat penting.
-
-* **Eloquent & Blade/Inertia:** Mengikuti pola *Model-View-Controller* (MVC) yang standar, sehingga jika ada pergantian developer atau penambahan anggota tim baru, proses *onboarding* akan jauh lebih cepat karena dokumentasi Laravel yang sangat lengkap.
-
-### 4. Ekosistem Siap Pakai
-
-Laravel 12 mendukung integrasi cepat untuk kebutuhan kantor seperti:
-
-* **Notifications:** Mengirim slip gaji atau pengumuman via Email/Slack.
-* **Excel Integration:** Mengimpor atau mengekspor data karyawan secara massal dengan Laravel Excel.
-* **Task Scheduling:** Otomatisasi laporan bulanan setiap tanggal tertentu.
+Lihat **[DOCUMENTATION.md](DOCUMENTATION.md)** untuk:
+- Struktur folder lengkap & fungsi setiap file
+- Schema database semua tabel
+- Panduan upload & manajemen gambar
+- Semua API routes
+- Panduan deployment produksi
+- Troubleshooting
 
 ---
 
-## 🏃 Cara Menjalankan Project
+## Kelebihan & Capaian
 
-1. **Konfigurasi Environment:** Sesuaikan `.env` (Database, Mail, App URL).
-2. **Migrasi Database:** `php artisan migrate`.
-3. **Jalankan Server:**
-* Terminal 1: `php artisan serve`
-* Terminal 2: `npm run dev`
-
-
+- **Full-stack terintegrasi** — Laravel & React terhubung via Inertia.js tanpa REST API terpisah
+- **CMS siap pakai** — Admin bisa kelola semua konten (film, produk, ruangan, carousel, tim) langsung dari browser dengan upload gambar
+- **Gambar terkelola** — Semua aset disimpan di `storage/app/public/` dan diakses via symlink, tidak tercampur dengan kode
+- **14 tabel database** — Schema lengkap dengan soft deletes, relasi, dan foreign key
+- **Multi-lini bisnis** — Satu platform untuk produk retail, konstruksi, film, dan sewa ruangan
+- **Responsive & SEO-ready** — Mobile-first design, sitemap otomatis, meta tags lengkap
+- **Keamanan bawaan** — CSRF, SQL injection prevention, autentikasi, middleware role admin
 
 ---
 
-## 📝 Kontribusi
-
-Silakan buat *Pull Request* atau hubungi departemen IT perusahaan untuk saran fitur baru.
-
+&copy; 2026 PT Bina Auto Solusi. All rights reserved.

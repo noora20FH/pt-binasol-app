@@ -21,5 +21,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+        /** @var \Illuminate\Foundation\Application $app */
+        $app = $this->app;
+        $app->useLangPath(base_path('lang'));
     }
 }

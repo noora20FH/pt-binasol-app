@@ -16,6 +16,7 @@ use App\Http\Controllers\RoomController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Admin\AdminCategoryController;
 
 // Public Routes (guests & customers)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -69,6 +70,9 @@ Route::middleware('auth')->group(function () {
     // === Perfilman (Film Management) ===
     Route::resource('admin/films', \App\Http\Controllers\Admin\AdminFilmController::class)
         ->names('admin.films');
+    // === Kategori ===
+    Route::resource('admin/categories', \App\Http\Controllers\Admin\AdminCategoryController::class)
+        ->names('admin.categories');
 
     // === Retail & Construction Products (FULL CRUD) ===
     Route::prefix('admin')->name('admin.')->group(function () {

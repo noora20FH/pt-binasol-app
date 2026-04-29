@@ -12,6 +12,7 @@ import {
     X,
     Search,
     Building2,
+    Tags,
 } from "lucide-react";
 
 import { Link, usePage } from '@inertiajs/react';
@@ -32,6 +33,7 @@ export default function AdminLayout({
     const menuItems = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: route('admin.dashboard') },
         { id: "perfilman", label: "Perfilman", icon: Film, href: "/admin/films" },
+        { id: "kategori", label: "Kategori", icon: Tags, href: "/admin/categories" },
         { id: "retail", label: "Retail", icon: ShoppingBag, href: "/admin/retail-products" },
         { id: "konstruksi", label: "Konstruksi", icon: HardHat, href: "/admin/construction-products" },
         { id: "orders", label: "Orders & Penjualan", icon: ShoppingCart, href: "/admin/orders" },

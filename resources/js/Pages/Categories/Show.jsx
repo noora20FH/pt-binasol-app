@@ -390,7 +390,7 @@ export default function CategoryShow({ category }) {
                         {category.image && (
                             <div className="h-40 md:h-48 rounded-xl overflow-hidden bg-white/20">
                                 <img
-                                    src={category.image}
+                                    src={encodeURI(category.image)}
                                     alt={category.name}
                                     loading="lazy"
                                     className="w-full h-full object-cover"

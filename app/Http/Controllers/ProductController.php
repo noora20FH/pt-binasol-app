@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -13,6 +14,17 @@ class ProductController extends Controller
         $products = Product::with(['category', 'images'])
             ->select('id', 'category_id', 'name', 'slug', 'price', 'original_price', 'badge', 'stock')
             ->paginate(12);
+        $products->getCollection()->transform(function ($product) {
+            if ($product->relationLoaded('images') && $product->images->isNotEmpty()) {
+                $product->images->transform(function ($image) {
+                    if ($image && $image->image_path) {
+                        $image->image_path = Storage::url(ltrim($image->image_path, '/'));
+                    }
+                    return $image;
+                });
+            }
+            return $product;
+        });
 
         return inertia('Products/Index', [
             'products' => $products,
@@ -28,7 +40,16 @@ class ProductController extends Controller
             ->with('images')
             ->limit(4)
             ->get();
-
+        $relatedProducts->each(function ($p) {
+            if ($p->relationLoaded('images') && $p->images->isNotEmpty()) {
+                $p->images->transform(function ($image) {
+                    if ($image && $image->image_path) {
+                        $image->image_path = Storage::url(ltrim($image->image_path, '/'));
+                    }
+                    return $image;
+                });
+            }
+        });
         return inertia('Products/Show', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
@@ -92,7 +113,17 @@ class ProductController extends Controller
                 $q->where('category_id', $category);
             })
             ->paginate(12);
-
+        $products->getCollection()->transform(function ($product) {
+            if ($product->relationLoaded('images') && $product->images->isNotEmpty()) {
+                $product->images->transform(function ($image) {
+                    if ($image && $image->image_path) {
+                        $image->image_path = Storage::url(ltrim($image->image_path, '/'));
+                    }
+                    return $image;
+                });
+            }
+            return $product;
+        });
         return inertia('Products/Search', [
             'products' => $products,
             'query' => $query,

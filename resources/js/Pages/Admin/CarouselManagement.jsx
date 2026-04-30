@@ -18,10 +18,10 @@ function CarouselForm({ slide, onBack }) {
         setImageFile(file);
         setImagePreview(URL.createObjectURL(file));
     };
-
-    const handleSubmit = (e) => {
+const handleSubmit = (e) => {
         e.preventDefault();
         setProcessing(true);
+
         const fd = new FormData();
         fd.append('title', title);
         fd.append('subtitle', subtitle);
@@ -29,9 +29,15 @@ function CarouselForm({ slide, onBack }) {
         fd.append('theme', theme);
         if (imageFile) fd.append('image', imageFile);
 
-        const url = slide?.id
+        // ✅ PERBAIKAN UTAMA: Gunakan _method spoofing untuk update
+        const isEdit = !!slide?.id;
+        const url = isEdit
             ? route('admin.carousel-slides.update', slide.id)
             : route('admin.carousel-slides.store');
+
+        if (isEdit) {
+            fd.append('_method', 'PUT');
+        }
 
         router.post(url, fd, {
             forceFormData: true,

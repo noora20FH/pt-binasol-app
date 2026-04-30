@@ -19,6 +19,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
+use App\Http\Controllers\Admin\AdminCarouselSlideController;
 
 
 // Public Routes (guests & customers)
@@ -117,10 +118,14 @@ Route::middleware('auth')->group(function () {
             'update'  => 'admin.team-members.update',
             'destroy' => 'admin.team-members.destroy',
         ]);
-
-    Route::get('/admin/carousel-slides', function () {
-        return Inertia::render('Admin/CarouselManagement');
-    })->name('admin.carousel-slides');
+Route::resource('admin/carousel-slides', AdminCarouselSlideController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->names([
+                'index'   => 'admin.carousel-slides',
+                'store'   => 'admin.carousel-slides.store',
+                'update'  => 'admin.carousel-slides.update',
+                'destroy' => 'admin.carousel-slides.destroy',
+            ]);
 });
 
 require __DIR__ . '/auth.php';

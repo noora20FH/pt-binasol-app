@@ -8,25 +8,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
-class CarouselSlideController extends Controller
+class AdminCarouselSlideController extends Controller
 {
+    /**
+     * Tampilkan daftar slide carousel.
+     */
     public function index()
     {
         $slides = CarouselSlide::orderBy('created_at', 'desc')
             ->get()
             ->map(fn($s) => [
-                'id'       => $s->id,
-                'title'    => $s->title,
-                'subtitle' => $s->subtitle,
-                'image'    => $s->image ? Storage::url($s->image) : null,
-                'link'     => $s->link,
-                'theme'    => $s->theme,
+                'id'         => $s->id,
+                'title'      => $s->title,
+                'subtitle'   => $s->subtitle,
+                'image'      => $s->image ? Storage::url($s->image) : null,
+                'link'       => $s->link,
+                'theme'      => $s->theme,
                 'created_at' => $s->created_at?->toIso8601String(),
             ]);
 
-        return Inertia::render('Admin/CarouselManagement', ['slides' => $slides]);
+        return Inertia::render('Admin/CarouselManagement', [
+            'slides' => $slides,
+        ]);
     }
 
+    /**
+     * Simpan slide carousel baru.
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -47,9 +55,12 @@ class CarouselSlideController extends Controller
 
         CarouselSlide::create($data);
 
-        return redirect()->back()->with('success', 'Slide berhasil ditambahkan!');
+        return redirect()->back()->with('success', 'Slide carousel berhasil ditambahkan!');
     }
 
+    /**
+     * Update slide carousel.
+     */
     public function update(Request $request, CarouselSlide $carouselSlide)
     {
         $request->validate([
@@ -68,6 +79,7 @@ class CarouselSlideController extends Controller
         ];
 
         if ($request->hasFile('image')) {
+            // Hapus gambar lama jika ada
             if ($carouselSlide->image) {
                 Storage::disk('public')->delete($carouselSlide->image);
             }
@@ -76,16 +88,20 @@ class CarouselSlideController extends Controller
 
         $carouselSlide->update($data);
 
-        return redirect()->back()->with('success', 'Slide berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Slide carousel berhasil diperbarui!');
     }
 
+    /**
+     * Hapus slide carousel (soft delete).
+     */
     public function destroy(CarouselSlide $carouselSlide)
     {
         if ($carouselSlide->image) {
             Storage::disk('public')->delete($carouselSlide->image);
         }
+
         $carouselSlide->delete();
 
-        return redirect()->back()->with('success', 'Slide berhasil dihapus!');
+        return redirect()->back()->with('success', 'Slide carousel berhasil dihapus!');
     }
 }

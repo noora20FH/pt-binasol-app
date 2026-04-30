@@ -15,8 +15,16 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $slides = CarouselSlide::select('id', 'title', 'subtitle', 'image', 'link', 'theme')->get();
-
+        $slides = CarouselSlide::orderBy('created_at', 'desc')  // atau sesuaikan urutan yang diinginkan
+            ->get()
+            ->map(fn($slide) => [
+                'id'       => $slide->id,
+                'title'    => $slide->title,
+                'subtitle' => $slide->subtitle,
+                'image'    => $slide->image ? Storage::url($slide->image) : null,
+                'link'     => $slide->link,
+                'theme'    => $slide->theme,
+            ]);
         // Kategori + transform image & icon
         $categories = Category::select('id', 'name', 'slug', 'image', 'icon', 'is_logo')
             ->with('products:id,category_id')

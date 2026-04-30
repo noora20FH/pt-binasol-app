@@ -60,17 +60,60 @@ class FilmController extends Controller
     {
         $film->load([
             'castMembers',
-            'episodes',           // tanpa .platforms
-            'filmPlatforms'       // ← ini yang penting
+            'episodes',
+            'filmPlatforms'
         ]);
 
+        // Transform data film + assets (sama seperti AdminFilmController)
+        $filmData = [
+            'id'          => $film->id,
+            'title'       => $film->title,
+            'description' => $film->description,
+            'genres'      => $film->genres,
+            'rating'      => $film->rating,
+            'year'        => $film->year,
+            'poster'      => $film->poster ? Storage::url($film->poster) : null,
+            'banner'      => $film->banner ? Storage::url($film->banner) : null,
+            'is_featured' => $film->is_featured,
+
+            // Cast Members (Show.jsx pakai film.castMembers)
+            'castMembers' => $film->castMembers->map(fn($c) => [
+                'id'    => $c->id,
+                'name'  => $c->name,
+                'role'  => $c->role,
+                'image' => $c->image ? Storage::url($c->image) : null,
+            ]),
+
+            // Episodes
+            'episodes' => $film->episodes->map(fn($e) => [
+                'id'       => $e->id,
+                'number'   => $e->number,
+                'title'    => $e->title,
+                'duration' => $e->duration,
+            ]),
+
+            // Platforms (Show.jsx pakai film.film_platforms)
+            'film_platforms' => $film->filmPlatforms->map(fn($p) => [
+                'id'            => $p->id,
+                'platform_name' => $p->platform_name,
+                'url'           => $p->url,
+            ]),
+        ];
+
+        // Featured films juga harus pakai full URL poster
         $featuredFilms = Film::where('is_featured', true)
             ->where('id', '!=', $film->id)
             ->limit(4)
-            ->get();
+            ->get()
+            ->map(fn($f) => [
+                'id'     => $f->id,
+                'title'  => $f->title,
+                'poster' => $f->poster ? Storage::url($f->poster) : null,
+                'rating' => $f->rating,
+            ]);
 
         return inertia('Films/Show', [
-            'film' => $film,
+            'film'          => $filmData,
             'featuredFilms' => $featuredFilms,
         ]);
     }

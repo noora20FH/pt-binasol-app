@@ -1,53 +1,105 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class TeamMemberController extends Controller
 {
+    /**
+     * Tampilkan daftar anggota tim.
+     */
     public function index()
     {
-        $teamMembers = TeamMember::orderBy('order_priority', 'asc')->get();
+        $members = TeamMember::orderBy('order_priority', 'asc')
+            ->get()
+            ->map(fn($m) => [
+                'id'              => $m->id,
+                'name'            => $m->name,
+                'role'            => $m->role,
+                'image'           => $m->image ? Storage::url($m->image) : null,
+                'order_priority'  => $m->order_priority,
+                'created_at'      => $m->created_at?->toIso8601String(),
+            ]);
 
-        return inertia('TeamMembers/Index', [
-            'teamMembers' => $teamMembers,
+        return Inertia::render('Admin/TeamManagement', [
+            'members' => $members,
         ]);
     }
 
+    /**
+     * Simpan anggota tim baru.
+     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'role' => 'required|string|max:255',
-            'image' => 'nullable|string',
+        $request->validate([
+            'name'           => 'required|string|max:255',
+            'role'           => 'required|string|max:255',
+            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'order_priority' => 'nullable|integer|min:0',
         ]);
 
-        TeamMember::create($validated);
+        $data = [
+            'name'           => $request->name,
+            'role'           => $request->role,
+            'order_priority' => $request->order_priority ?? 0,
+        ];
 
-        return redirect()->back();
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('team', 'public');
+        }
+
+        TeamMember::create($data);
+
+        return redirect()->back()->with('success', 'Anggota tim berhasil ditambahkan!');
     }
 
+    /**
+     * Update anggota tim.
+     */
     public function update(Request $request, TeamMember $teamMember)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'role' => 'required|string|max:255',
-            'image' => 'nullable|string',
+        $request->validate([
+            'name'           => 'required|string|max:255',
+            'role'           => 'required|string|max:255',
+            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'order_priority' => 'nullable|integer|min:0',
         ]);
 
-        $teamMember->update($validated);
+        $data = [
+            'name'           => $request->name,
+            'role'           => $request->role,
+            'order_priority' => $request->order_priority ?? $teamMember->order_priority,
+        ];
 
-        return redirect()->back();
+        if ($request->hasFile('image')) {
+            // Hapus foto lama jika ada
+            if ($teamMember->image) {
+                Storage::disk('public')->delete($teamMember->image);
+            }
+            $data['image'] = $request->file('image')->store('team', 'public');
+        }
+
+        $teamMember->update($data);
+
+        return redirect()->back()->with('success', 'Anggota tim berhasil diperbarui!');
     }
 
+    /**
+     * Hapus anggota tim (soft delete).
+     */
     public function destroy(TeamMember $teamMember)
     {
+        if ($teamMember->image) {
+            Storage::disk('public')->delete($teamMember->image);
+        }
+
         $teamMember->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Anggota tim berhasil dihapus!');
     }
 }

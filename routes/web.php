@@ -17,6 +17,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminFilmController;
+use App\Http\Controllers\Admin\AdminTeamMemberController;
+
 
 // Public Routes (guests & customers)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
@@ -98,13 +101,22 @@ Route::middleware('auth')->group(function () {
         ->names('admin.rooms');
 
     // === Lainnya ===
-    Route::get('/admin/orders', function () {
-        return Inertia::render('Admin/OrderManagement');
-    })->name('admin.orders');
+    Route::resource('admin/orders', \App\Http\Controllers\Admin\OrderController::class)
+        ->only(['index', 'destroy'])
+        ->names([
+            'index'   => 'admin.orders',
+            'destroy' => 'admin.orders.destroy',
+        ]);
 
-    Route::get('/admin/team-members', function () {
-        return Inertia::render('Admin/TeamManagement');
-    })->name('admin.team-members');
+
+    Route::resource('admin/team-members', AdminTeamMemberController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names([
+            'index'   => 'admin.team-members',
+            'store'   => 'admin.team-members.store',
+            'update'  => 'admin.team-members.update',
+            'destroy' => 'admin.team-members.destroy',
+        ]);
 
     Route::get('/admin/carousel-slides', function () {
         return Inertia::render('Admin/CarouselManagement');

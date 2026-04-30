@@ -179,14 +179,17 @@ export default function ProductShow({ product, relatedProducts }) {
                 body: JSON.stringify({ product_id: product.id, quantity }),
             });
             const data = await response.json();
-            if (data.success) { alert('Produk berhasil ditambahkan ke keranjang!'); setQuantity(1); }
+            if (data.success) {
+                alert('Produk berhasil ditambahkan ke keranjang!');
+                setQuantity(1);
+            }
         } catch {
             alert('Gagal menambahkan produk ke keranjang');
         } finally {
             setLoading(false);
         }
     };
-
+   
     return (
         <PublicLayout title={product.name} description={product.description}>
             {/* Breadcrumb */}
@@ -206,7 +209,6 @@ export default function ProductShow({ product, relatedProducts }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-                        {/* ── Left: Carousel ── */}
                         <ImageCarousel images={product.images || []} productName={product.name} />
 
                         {/* ── Right: Details ── */}
@@ -270,17 +272,21 @@ export default function ProductShow({ product, relatedProducts }) {
                             {product.stock > 0 && (
                                 <div className="flex items-center space-x-4 mb-6">
                                     <div className="flex items-center border border-secondary-300 rounded-lg">
-                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))} disabled={loading}
-                                            className="px-4 py-2 hover:bg-secondary-100 transition disabled:opacity-50">−</button>
+                                        <button onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                            className="px-4 py-2 hover:bg-secondary-100 transition">−</button>
                                         <input type="number" value={quantity}
                                             onChange={(e) => setQuantity(Math.max(1, Math.min(product.stock, parseInt(e.target.value) || 1)))}
-                                            disabled={loading}
-                                            className="w-16 text-center border-l border-r border-secondary-300 py-2 focus:outline-none disabled:opacity-50" />
-                                        <button onClick={() => setQuantity(Math.min(product.stock, quantity + 1))} disabled={loading}
-                                            className="px-4 py-2 hover:bg-secondary-100 transition disabled:opacity-50">+</button>
+                                            className="w-16 text-center border-l border-r border-secondary-300 py-2" />
+                                        <button onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                                            className="px-4 py-2 hover:bg-secondary-100 transition">+</button>
                                     </div>
-                                    <button onClick={handleAddToCart} disabled={loading}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-6 bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white rounded-lg font-bold text-base transition">
+                                    <button
+                                        onClick={handleAddToCart}
+                                        disabled={loading}
+                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-6
+                                                   bg-[#D98344] hover:bg-[#C36F3A] disabled:opacity-50
+                                                   text-white rounded-lg font-bold text-base transition"
+                                    >
                                         <ShoppingCart className="w-5 h-5" />
                                         {loading ? 'Menambahkan...' : 'Tambah ke Keranjang'}
                                     </button>

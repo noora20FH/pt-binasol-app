@@ -1,10 +1,20 @@
-import React from 'react';
-import { Link } from '@inertiajs/react';
-import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import React from "react";
+import { Link } from "@inertiajs/react";
+import {
+    MapPin,
+    Phone,
+    Mail,
+    Facebook,
+    Instagram,
+    Twitter,
+    Linkedin,
+} from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#111827] text-white mt-20">   {/* Hardcode dark color biar pasti */}
+        <footer className="bg-[#111827] text-white mt-20">
+            {" "}
+            {/* Hardcode dark color biar pasti */}
             {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -14,14 +24,15 @@ export default function Footer() {
                             PT Bina Auto Solusi
                         </h3>
                         <p className="text-gray-400 mb-6 leading-relaxed">
-                            Penyedia solusi terbaik untuk sektor konstruksi dan ritel dengan komitmen kualitas dan inovasi.
+                            Penyedia solusi terbaik untuk sektor konstruksi dan
+                            ritel dengan komitmen kualitas dan inovasi.
                         </p>
                         <div className="flex space-x-5">
                             {[
                                 { Icon: Facebook },
                                 { Icon: Instagram },
                                 { Icon: Twitter },
-                                { Icon: Linkedin }
+                                { Icon: Linkedin },
                             ].map(({ Icon }, i) => (
                                 <a
                                     key={i}
@@ -36,34 +47,88 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-6 text-white">Menu</h4>
+                        <h4 className="text-lg font-semibold mb-6 text-white">
+                            Menu
+                        </h4>
                         <ul className="space-y-3 text-gray-400">
-                            <li><Link href="/" className="hover:text-[#f97316] transition-colors">Beranda</Link></li>
-                            <li><Link href="/categories" className="hover:text-[#f97316] transition-colors">Kategori</Link></li>
-                            <li><Link href="/products" className="hover:text-[#f97316] transition-colors">Produk</Link></li>
-                            <li><Link href="/films" className="hover:text-[#f97316] transition-colors">Film</Link></li>
-                            <li><Link href="/sewa-ruangan" className="hover:text-[#f97316] transition-colors">Sewa Ruangan</Link></li>
-                            <li><Link href="/about" className="hover:text-[#f97316] transition-colors">Tentang Kami</Link></li>
+                            <li>
+                                <Link
+                                    href="/"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Beranda
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/categories"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Kategori
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/products"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Produk
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/films"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Film
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/sewa-ruangan"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Sewa Ruangan
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/about"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    Tentang Kami
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-6 text-white">Hubungi Kami</h4>
+                        <h4 className="text-lg font-semibold mb-6 text-white">
+                            Hubungi Kami
+                        </h4>
                         <ul className="space-y-4 text-gray-400">
                             <li className="flex items-start space-x-3">
                                 <MapPin className="w-5 h-5 text-[#f97316] mt-0.5 flex-shrink-0" />
-                                <span>Jl. Industri No. 123, Jakarta, Indonesia</span>
+                                <span>
+                                    Jl. Raya Narogong Km. 12 17151 Kota Bekasi Jawa Barat
+                                </span>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Phone className="w-5 h-5 text-[#f97316]" />
-                                <a href="tel:+621234567890" className="hover:text-[#f97316] transition-colors">
+                                <a
+                                    href="tel:+621234567890"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
                                     +62 123 456 7890
                                 </a>
                             </li>
                             <li className="flex items-center space-x-3">
                                 <Mail className="w-5 h-5 text-[#f97316]" />
-                                <a href="mailto:info@binaauto.com" className="hover:text-[#f97316] transition-colors">
+                                <a
+                                    href="mailto:info@binaauto.com"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
                                     info@binaauto.com
                                 </a>
                             </li>
@@ -72,9 +137,12 @@ export default function Footer() {
 
                     {/* Newsletter */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-6 text-white">Newsletter</h4>
+                        <h4 className="text-lg font-semibold mb-6 text-white">
+                            Newsletter
+                        </h4>
                         <p className="text-gray-400 mb-4 text-sm">
-                            Daftarkan email Anda untuk mendapatkan update terbaru.
+                            Daftarkan email Anda untuk mendapatkan update
+                            terbaru.
                         </p>
                         <form className="space-y-3">
                             <input
@@ -92,15 +160,32 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
-
             {/* Bottom Bar */}
             <div className="border-t border-gray-800 py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-                    <p>&copy; {new Date().getFullYear()} PT Bina Auto Solusi. Semua hak dilindungi.</p>
+                    <p>
+                        &copy; {new Date().getFullYear()} PT Bina Auto Solusi.
+                        Semua hak dilindungi.
+                    </p>
                     <div className="flex flex-wrap gap-x-6">
-                        <a href="#" className="hover:text-[#f97316] transition-colors">Kebijakan Privasi</a>
-                        <a href="#" className="hover:text-[#f97316] transition-colors">Syarat Layanan</a>
-                        <a href="#" className="hover:text-[#f97316] transition-colors">Sitemap</a>
+                        <a
+                            href="#"
+                            className="hover:text-[#f97316] transition-colors"
+                        >
+                            Kebijakan Privasi
+                        </a>
+                        <a
+                            href="#"
+                            className="hover:text-[#f97316] transition-colors"
+                        >
+                            Syarat Layanan
+                        </a>
+                        <a
+                            href="#"
+                            className="hover:text-[#f97316] transition-colors"
+                        >
+                            Sitemap
+                        </a>
                     </div>
                 </div>
             </div>

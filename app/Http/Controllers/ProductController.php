@@ -35,21 +35,30 @@ class ProductController extends Controller
     {
         $product->load(['category', 'specifications', 'images', 'testimonials']);
 
+        // 🔥 TRANSFORM IMAGE PATH (WAJIB)
+        $product->images = $product->images->map(function ($image) {
+            $image->image_path = $image->image_path
+                ? Storage::url(ltrim($image->image_path, '/'))
+                : null;
+            return $image;
+        });
+
+        // Related products juga di-transform
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->with('images')
             ->limit(4)
-            ->get();
-        $relatedProducts->each(function ($p) {
-            if ($p->relationLoaded('images') && $p->images->isNotEmpty()) {
-                $p->images->transform(function ($image) {
-                    if ($image && $image->image_path) {
-                        $image->image_path = Storage::url(ltrim($image->image_path, '/'));
-                    }
+            ->get()
+            ->map(function ($p) {
+                $p->images = $p->images->map(function ($image) {
+                    $image->image_path = $image->image_path
+                        ? Storage::url(ltrim($image->image_path, '/'))
+                        : null;
                     return $image;
                 });
-            }
-        });
+                return $p;
+            });
+
         return inertia('Products/Show', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,

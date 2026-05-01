@@ -118,14 +118,14 @@ Route::middleware('auth')->group(function () {
             'update'  => 'admin.team-members.update',
             'destroy' => 'admin.team-members.destroy',
         ]);
-Route::resource('admin/carousel-slides', AdminCarouselSlideController::class)
-            ->only(['index', 'store', 'update', 'destroy'])
-            ->names([
-                'index'   => 'admin.carousel-slides',
-                'store'   => 'admin.carousel-slides.store',
-                'update'  => 'admin.carousel-slides.update',
-                'destroy' => 'admin.carousel-slides.destroy',
-            ]);
+    Route::resource('admin/carousel-slides', AdminCarouselSlideController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names([
+            'index'   => 'admin.carousel-slides',
+            'store'   => 'admin.carousel-slides.store',
+            'update'  => 'admin.carousel-slides.update',
+            'destroy' => 'admin.carousel-slides.destroy',
+        ]);
 });
 
 require __DIR__ . '/auth.php';

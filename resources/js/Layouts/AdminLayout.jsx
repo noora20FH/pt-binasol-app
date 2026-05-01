@@ -13,9 +13,10 @@ import {
     Search,
     Building2,
     Tags,
+    User,
 } from "lucide-react";
 
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from "@inertiajs/react";
 
 // Logo
 import logoImage from "/public/logo.png";
@@ -31,15 +32,55 @@ export default function AdminLayout({
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
     const menuItems = [
-        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, href: route('admin.dashboard') },
-        { id: "perfilman", label: "Perfilman", icon: Film, href: "/admin/films" },
-        { id: "kategori", label: "Kategori", icon: Tags, href: "/admin/categories" },
-        { id: "retail", label: "Retail", icon: ShoppingBag, href: "/admin/retail-products" },
-        { id: "konstruksi", label: "Konstruksi", icon: HardHat, href: "/admin/construction-products" },
-        { id: "orders", label: "Orders & Penjualan", icon: ShoppingCart, href: "/admin/orders" },
+        {
+            id: "dashboard",
+            label: "Dashboard",
+            icon: LayoutDashboard,
+            href: route("admin.dashboard"),
+        },
+        {
+            id: "perfilman",
+            label: "Perfilman",
+            icon: Film,
+            href: "/admin/films",
+        },
+        {
+            id: "kategori",
+            label: "Kategori",
+            icon: Tags,
+            href: "/admin/categories",
+        },
+        {
+            id: "retail",
+            label: "Retail",
+            icon: ShoppingBag,
+            href: "/admin/retail-products",
+        },
+        {
+            id: "konstruksi",
+            label: "Konstruksi",
+            icon: HardHat,
+            href: "/admin/construction-products",
+        },
+        {
+            id: "orders",
+            label: "Orders & Penjualan",
+            icon: ShoppingCart,
+            href: "/admin/orders",
+        },
         { id: "team", label: "Tim", icon: Users, href: "/admin/team-members" },
-        { id: "carousel", label: "Carousel", icon: ImageIcon, href: "/admin/carousel-slides" },
-        { id: "sewa-ruangan", label: "Sewa Ruangan", icon: Building2, href: "/admin/rooms" },
+        {
+            id: "carousel",
+            label: "Carousel",
+            icon: ImageIcon,
+            href: "/admin/carousel-slides",
+        },
+        {
+            id: "sewa-ruangan",
+            label: "Sewa Ruangan",
+            icon: Building2,
+            href: "/admin/rooms",
+        },
     ];
 
     return (
@@ -93,7 +134,7 @@ export default function AdminLayout({
                 {/* Logout Button */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
                     <Link
-                        href={route('logout')}
+                        href={route("logout")}
                         method="post"
                         as="button"
                         className="w-full flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#FF751F] rounded transition-colors"
@@ -117,7 +158,11 @@ export default function AdminLayout({
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                         >
-                            {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                            {sidebarOpen ? (
+                                <X className="w-5 h-5" />
+                            ) : (
+                                <Menu className="w-5 h-5" />
+                            )}
                         </button>
 
                         {title && (
@@ -140,17 +185,22 @@ export default function AdminLayout({
 
                         {/* User Profile */}
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 bg-[#FF751F] rounded-full flex items-center justify-center text-white font-semibold">
-                                {user?.name?.charAt(0) || 'A'}
-                            </div>
-                            <div className="hidden md:block">
-                                <p className="text-sm font-medium text-gray-800">
-                                    {user?.name || 'Admin'}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    {user?.email || 'Administrator'}
-                                </p>
-                            </div>
+                            <Link
+                                href={route("profile.edit")}
+                                className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-2xl transition-colors group"
+                            >
+                                <div className="w-9 h-9 bg-[#FF751F] rounded-full flex items-center justify-center text-white font-semibold group-hover:scale-105 transition-transform">
+                                    {user?.name?.charAt(0) || "A"}
+                                </div>
+                                <div className="hidden md:block text-left">
+                                    <p className="text-sm font-medium text-gray-800 group-hover:text-[#FF751F]">
+                                        {user?.name || "Admin"}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        Lihat Profil
+                                    </p>
+                                </div>
+                            </Link>
                         </div>
                     </div>
                 </header>

@@ -15,11 +15,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Seed all data in correct order
+        $this->call([
+            AdminSeeder::class,
+            CarouselSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
+            OrderSeeder::class,
         ]);
+
+        $this->command->info('========================================');
+        $this->command->info('Database seeding completed successfully!');
+        $this->command->info('========================================');
+        $this->command->info('');
+        $this->command->info('Admin Login: admin@binasol.com / admin123');
+        $this->command->info('Customer: Register new account or use existing');
+        $this->command->info('');
     }
 }

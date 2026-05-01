@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart, Package } from 'lucide-react';
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
@@ -49,12 +49,24 @@ export default function Navigation() {
                     <div className="hidden md:flex items-center space-x-4">
                         {auth.user ? (
                             <>
-                                <Link
-                                    href="/dashboard"
-                                    className="px-4 py-2 text-secondary-700 hover:text-primary-600 transition"
-                                >
-                                    Dashboard
-                                </Link>
+                                {auth.user.role === 'customer' && (
+                                    <>
+                                        <Link
+                                            href={route('cart.view')}
+                                            className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                            title="Keranjang"
+                                        >
+                                            <ShoppingCart className="w-5 h-5" />
+                                        </Link>
+                                        <Link
+                                            href={route('orders.index')}
+                                            className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                            title="Pesanan Saya"
+                                        >
+                                            <Package className="w-5 h-5" />
+                                        </Link>
+                                    </>
+                                )}
                                 <Link
                                     href="/profile"
                                     className="px-4 py-2 text-secondary-700 hover:text-primary-600 transition"
@@ -64,6 +76,13 @@ export default function Navigation() {
                             </>
                         ) : (
                             <>
+                                <Link
+                                    href={route('cart.view')}
+                                    className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                    title="Keranjang"
+                                >
+                                    <ShoppingCart className="w-5 h-5" />
+                                </Link>
                                 <Link
                                     href="/login"
                                     className="px-4 py-2 text-secondary-700 hover:text-primary-600 transition"
@@ -113,13 +132,26 @@ export default function Navigation() {
                         <hr className="my-2" />
                         {auth.user ? (
                             <>
-                                <Link
-                                    href="/dashboard"
-                                    className="block px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Dashboard
-                                </Link>
+                                {auth.user.role === 'customer' && (
+                                    <>
+                                        <Link
+                                            href={route('cart.view')}
+                                            className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <ShoppingCart className="w-4 h-4" />
+                                            Keranjang
+                                        </Link>
+                                        <Link
+                                            href={route('orders.index')}
+                                            className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <Package className="w-4 h-4" />
+                                            Pesanan Saya
+                                        </Link>
+                                    </>
+                                )}
                                 <Link
                                     href="/profile"
                                     className="block px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
@@ -130,6 +162,14 @@ export default function Navigation() {
                             </>
                         ) : (
                             <>
+                                <Link
+                                    href={route('cart.view')}
+                                    className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Keranjang
+                                </Link>
                                 <Link
                                     href="/login"
                                     className="block px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"

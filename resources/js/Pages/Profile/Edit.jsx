@@ -1,9 +1,11 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+
 import { Head, usePage } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import AdminLayout from '@/Layouts/AdminLayout';
+import PublicLayout from '@/Layouts/PublicLayout';
+
 
 export default function Edit({ mustVerifyEmail, status }) {
     const { auth } = usePage().props;
@@ -48,11 +50,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                 {content}
             </AdminLayout>
         );
-    }
+    } else {
 
     // User biasa → gunakan AuthenticatedLayout (standar)
     return (
-        <AuthenticatedLayout
+        <PublicLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
                     Profile
@@ -60,6 +62,7 @@ export default function Edit({ mustVerifyEmail, status }) {
             }
         >
             {content}
-        </AuthenticatedLayout>
+        </PublicLayout>
     );
+}
 }

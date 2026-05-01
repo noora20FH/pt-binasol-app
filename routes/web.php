@@ -25,7 +25,7 @@ use App\Http\Controllers\Admin\AdminCarouselSlideController;
 // Public Routes (guests & customers)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', [HomeController::class, 'index'])
-    ->middleware('redirect.admin.cms')
+    ->middleware('redirect.admin.cms')           // ← admin akan di-redirect ke admin dashboard
     ->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');

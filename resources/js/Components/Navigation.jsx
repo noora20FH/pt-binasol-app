@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link, usePage } from "@inertiajs/react";
-import { Menu, X, User } from "lucide-react";
+import { Link, usePage, router } from "@inertiajs/react";
+import { Menu, X, LogOut } from "lucide-react";
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const { url, auth } = usePage().props;
 
     const navLinks = [
@@ -15,6 +16,19 @@ export default function Navigation() {
         { label: "Tentang Kami", href: "/about" },
         { label: "Kontak", href: "/contact" },
     ];
+
+    // Ambil inisial untuk avatar
+    const getInitial = (name) => {
+        return name ? name.charAt(0).toUpperCase() : "U";
+    };
+
+    // Handler Logout (menggunakan Inertia router - cara resmi)
+    const handleLogout = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        setIsOpen(false);
+        router.post(route("logout"));
+    };
 
     return (
         <nav className="sticky top-0 z-50 bg-white shadow-md border-b-4 border-[#f97316]">
@@ -46,41 +60,64 @@ export default function Navigation() {
                         ))}
                     </div>
 
-                    {/* Auth Links - Desktop */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    {/* Auth Section - Desktop with Dropdown */}
+                    <div className="hidden md:flex items-center relative">
                         {auth.user ? (
-                            <>
-                                <Link
-                                    href="/dashboard"
-                                    className="px-4 py-2 text-[#44403c] hover:text-[#ea580c] transition"
+                            <div className="relative">
+                                {/* Trigger Dropdown */}
+                                <button
+                                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    className="flex items-center gap-3 px-4 py-2 transition hover:bg-[#fff7ed] rounded-2xl focus:outline-none"
                                 >
-                                    Dashboard
-                                </Link>
-                                <Link
-                                    href="/profile"
-                                    className={`flex items-center gap-2 px-4 py-2 transition ${
-                                        url === "/profile"
-                                            ? "text-[#ea580c] font-semibold border-b-2 border-[#f97316]"
-                                            : "text-[#44403c] hover:text-[#ea580c]"
-                                    }`}
-                                >
-                                    <User className="w-5 h-5" />
-                                    Profil
-                                </Link>
-                            </>
+                                    {/* Avatar dengan inisial */}
+                                    <div className="w-9 h-9 bg-[#ea580c] text-white rounded-2xl flex items-center justify-center font-semibold text-lg shadow-sm">
+                                        {getInitial(auth.user.name)}
+                                    </div>
+
+                                    {/* Nama + Email */}
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-[#44403c] font-medium">
+                                            {auth.user.name}
+                                        </span>
+                                        <span className="text-xs text-[#78716b]">
+                                            {auth.user.email}
+                                        </span>
+                                    </div>
+                                </button>
+
+                                {/* Dropdown Menu */}
+                                {dropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-3xl shadow-2xl border border-gray-100 py-2 z-50 overflow-hidden">
+                                        <Link
+                                            href="/profile"
+                                            className="flex items-center gap-3 px-5 py-3 text-[#44403c] hover:bg-[#fff7ed] transition"
+                                            onClick={() => setDropdownOpen(false)}
+                                        >
+                                            <span className="text-lg">👤</span>
+                                            <span className="font-medium">Profil</span>
+                                        </Link>
+
+                                        <button
+                                            onClick={handleLogout}
+                                            className="flex w-full items-center gap-3 px-5 py-3 text-red-600 hover:bg-red-50 transition font-medium border-t border-gray-100"
+                                        >
+                                            <LogOut className="w-5 h-5" />
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
                             <>
-                                {/* Login */}
                                 <Link
                                     href="/login"
                                     className="px-5 py-2 text-[#44403c] hover:text-[#ea580c] transition font-medium"
                                 >
                                     Login
                                 </Link>
-                                {/* Daftar - WARNA LANGSUNG */}
                                 <Link
                                     href="/register"
-                                    className="inline-flex items-center px-6 py-2 bg-[#ea580c] text-white rounded-lg hover:bg-[#c2410c] transition font-medium shadow-sm"
+                                    className="inline-flex items-center px-6 py-2 bg-[#ea580c] text-white rounded-2xl hover:bg-[#c2410c] transition font-medium shadow-sm ml-4"
                                 >
                                     Daftar
                                 </Link>
@@ -114,28 +151,27 @@ export default function Navigation() {
                                 {link.label}
                             </Link>
                         ))}
+
                         <hr className="my-2" />
+
                         {auth.user ? (
                             <>
                                 <Link
-                                    href="/dashboard"
-                                    className="block px-4 py-2 text-[#44403c] hover:bg-[#fff7ed] rounded transition"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    Dashboard
-                                </Link>
-                                <Link
                                     href="/profile"
-                                    className={`flex items-center gap-3 px-4 py-2 rounded transition ${
-                                        url === "/profile"
-                                            ? "bg-[#fff7ed] text-[#ea580c] font-semibold"
-                                            : "text-[#44403c] hover:bg-[#fff7ed]"
-                                    }`}
+                                    className="flex items-center gap-3 px-4 py-3 bg-[#fff7ed] rounded-2xl transition"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <User className="w-5 h-5" />
-                                    Profil
+                                    <span className="text-xl">👤</span>
+                                    <span className="font-medium">Profil</span>
                                 </Link>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-2xl transition"
+                                >
+                                    <LogOut className="w-5 h-5" />
+                                    <span className="font-medium">Logout</span>
+                                </button>
                             </>
                         ) : (
                             <>
@@ -148,7 +184,7 @@ export default function Navigation() {
                                 </Link>
                                 <Link
                                     href="/register"
-                                    className="block px-4 py-2 bg-[#ea580c] text-white rounded-lg hover:bg-[#c2410c] transition font-medium"
+                                    className="block px-4 py-2 bg-[#ea580c] text-white rounded-2xl hover:bg-[#c2410c] transition"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     Daftar

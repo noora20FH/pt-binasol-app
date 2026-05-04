@@ -4,141 +4,142 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     /**
-     * Display the checkout page
+     * Tampilkan halaman Checkout
      */
     public function index()
     {
-        $cart = session()->get('cart', []);
-        
-        if (empty($cart)) {
-            return redirect()->route('cart.view')->with('error', 'Keranjang belanja Anda kosong');
+        $cartData = $this->cartService->getCartData(request());
+
+        if (empty($cartData['items']) || $cartData['count'] === 0) {
+            return redirect()->route('cart.view')
+                ->with('error', 'Keranjang belanja Anda kosong');
         }
 
-        $cartItems = [];
-        $subtotal = 0;
-
-        foreach ($cart as $productId => $quantity) {
-            $product = Product::with('images')->find($productId);
-            if ($product) {
-                $itemTotal = $product->price * $quantity;
-                $cartItems[] = [
-                    'id' => $product->id,
-                    'product_id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => $quantity,
-                    'image' => $product->images->first()?->image_url,
-                    'total' => $itemTotal,
-                ];
-                $subtotal += $itemTotal;
-            }
-        }
-
-        // Calculate shipping and tax
+        $subtotal = $cartData['total'];
         $freeShippingThreshold = 500000;
         $shipping = $subtotal >= $freeShippingThreshold ? 0 : 25000;
-        $tax = round($subtotal * 0.11); // PPN 11%
+        $tax = round($subtotal * 0.11);
         $total = $subtotal + $shipping + $tax;
 
         $user = auth()->user();
 
         return Inertia::render('Checkout', [
-            'cartItems' => $cartItems,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'tax' => $tax,
-            'total' => $total,
-            'customer' => $user ? [
-                'name' => $user->name,
+            'cartItems' => $cartData['items'],   // ← sudah full URL dari CartService
+            'subtotal'  => $subtotal,
+            'shipping'  => $shipping,
+            'tax'       => $tax,
+            'total'     => $total,
+            'customer'  => $user ? [
+                'name'  => $user->name,
                 'email' => $user->email,
             ] : null,
         ]);
     }
 
     /**
-     * Process the checkout and create order
+     * Proses checkout → buat order
      */
     public function process(Request $request)
     {
         $validated = $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'required|string|max:20',
+            'customer_name'    => 'required|string|max:255',
+            'customer_email'   => 'required|email|max:255',
+            'customer_phone'   => 'required|string|max:20',
             'customer_address' => 'required|string',
-            'city' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:10',
-            'payment_method' => 'required|in:bank_transfer,e_wallet,cod',
-            'notes' => 'nullable|string',
+            'city'             => 'required|string|max:100',
+            'postal_code'      => 'required|string|max:10',
+            'payment_method'   => 'required|in:bank_transfer,e_wallet,cod',
+            'notes'            => 'nullable|string|max:500',
         ]);
 
-        $cart = session()->get('cart', []);
-        
-        if (empty($cart)) {
+        $cartData = $this->cartService->getCartData($request);
+
+        if (empty($cartData['items'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Keranjang belanja kosong',
             ], 400);
         }
 
-        // Calculate totals
-        $subtotal = 0;
-        $cartItems = [];
-
-        foreach ($cart as $productId => $quantity) {
-            $product = Product::find($productId);
-            if ($product) {
-                $cartItems[] = [
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'price' => $product->price,
-                ];
-                $subtotal += $product->price * $quantity;
-            }
-        }
-
+        $subtotal = $cartData['total'];
         $freeShippingThreshold = 500000;
         $shipping = $subtotal >= $freeShippingThreshold ? 0 : 25000;
         $tax = round($subtotal * 0.11);
         $total = $subtotal + $shipping + $tax;
 
-        // Create order
-        $order = Order::create([
-            'order_number' => 'ORD-' . date('Y') . '-' . strtoupper(Str::random(6)),
-            'user_id' => auth()->id(),
-            'customer_name' => $validated['customer_name'],
-            'customer_email' => $validated['customer_email'],
-            'customer_address' => $validated['customer_address'] . ', ' . $validated['city'] . ' ' . $validated['postal_code'],
-            'total_amount' => $total,
-            'payment_status' => 'pending',
-            'payment_type' => $validated['payment_method'],
-            'snap_token' => null, // Will be generated when payment is initiated
-        ]);
+        $fullAddress = trim($validated['customer_address'] . ', ' . $validated['city'] . ' ' . $validated['postal_code']);
 
-        // Create order items
-        foreach ($cartItems as $item) {
-            $order->items()->create($item);
+        DB::beginTransaction();
+
+        try {
+            $order = Order::create([
+                'order_number'     => 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6)),
+                'user_id'          => auth()->id(),
+                'customer_name'    => $validated['customer_name'],
+                'customer_email'   => $validated['customer_email'],
+                'customer_phone'   => $validated['customer_phone'],   // ← disimpan (pastikan kolom ada)
+                'customer_address' => $fullAddress,
+                'total_amount'     => $total,
+                'payment_status'   => 'pending',
+                'payment_type'     => $validated['payment_method'],
+                'notes'            => $validated['notes'] ?? null,
+            ]);
+
+            // Simpan order items dari cart_items
+            foreach ($cartData['items'] as $item) {
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $item['id'],
+                    'quantity'   => $item['quantity'],
+                    'price'      => $item['price'],
+                ]);
+            }
+
+            // Kosongkan keranjang (DB-based)
+            $this->cartService->clearCart($request);
+
+            DB::commit();
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'order' => [
+                        'id'            => $order->id,
+                        'order_number'  => $order->order_number,
+                        'total_amount'  => $order->total_amount,
+                        'payment_status' => $order->payment_status,
+                    ],
+                ]);
+            }
+
+            // Fallback untuk Inertia
+            return redirect()->route('orders.show', $order->id)
+                ->with('success', 'Pesanan berhasil dibuat!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Checkout Error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.',
+            ], 500);
         }
-
-        // Clear cart
-        session()->forget('cart');
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Pesanan berhasil dibuat',
-            'order' => [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'total_amount' => $order->total_amount,
-                'payment_status' => $order->payment_status,
-            ],
-        ]);
     }
 }

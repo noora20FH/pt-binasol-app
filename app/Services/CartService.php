@@ -130,7 +130,9 @@ class CartService
                 'name'     => $item->product->name,
                 'price'    => $item->unit_price ?? $item->product->price,
                 'quantity' => $item->quantity,
-                'image'    => $imagePath,                    // ← full URL
+               'image' => $item->product->images->first()?->image_path
+    ? Storage::url(ltrim($item->product->images->first()->image_path, '/'))
+    : null,
                 'total'    => ($item->unit_price ?? $item->product->price) * $item->quantity,
             ];
         });

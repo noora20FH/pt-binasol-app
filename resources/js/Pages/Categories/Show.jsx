@@ -1,27 +1,43 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Link } from '@inertiajs/react';
-import PublicLayout from '@/Layouts/PublicLayout';
-import { PrimaryButton } from '@/Components/Button';
-import { ShoppingCart, Heart, Share2, Star, ChevronLeft, ChevronRight, CheckCircle, X, ZoomIn } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Link,useForm } from "@inertiajs/react";
+import PublicLayout from "@/Layouts/PublicLayout";
+import { PrimaryButton } from "@/Components/Button";
+import {
+    ShoppingCart,
+    Heart,
+    Share2,
+    Star,
+    ChevronLeft,
+    ChevronRight,
+    CheckCircle,
+    X,
+    ZoomIn,
+} from "lucide-react";
 
 // Lightbox Modal
 function Lightbox({ images, startIndex, onClose }) {
     const [current, setCurrent] = useState(startIndex);
 
-    const prev = useCallback(() => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1)), [images.length]);
-    const next = useCallback(() => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1)), [images.length]);
+    const prev = useCallback(
+        () => setCurrent((c) => (c === 0 ? images.length - 1 : c - 1)),
+        [images.length],
+    );
+    const next = useCallback(
+        () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1)),
+        [images.length],
+    );
 
     useEffect(() => {
         const onKey = (e) => {
-            if (e.key === 'ArrowLeft') prev();
-            else if (e.key === 'ArrowRight') next();
-            else if (e.key === 'Escape') onClose();
+            if (e.key === "ArrowLeft") prev();
+            else if (e.key === "ArrowRight") next();
+            else if (e.key === "Escape") onClose();
         };
-        window.addEventListener('keydown', onKey);
-        document.body.style.overflow = 'hidden';
+        window.addEventListener("keydown", onKey);
+        document.body.style.overflow = "hidden";
         return () => {
-            window.removeEventListener('keydown', onKey);
-            document.body.style.overflow = '';
+            window.removeEventListener("keydown", onKey);
+            document.body.style.overflow = "";
         };
     }, [prev, next, onClose]);
 
@@ -46,7 +62,10 @@ function Lightbox({ images, startIndex, onClose }) {
             {/* Prev */}
             <button
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
-                onClick={(e) => { e.stopPropagation(); prev(); }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    prev();
+                }}
             >
                 <ChevronLeft className="w-6 h-6" />
             </button>
@@ -62,7 +81,10 @@ function Lightbox({ images, startIndex, onClose }) {
             {/* Next */}
             <button
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-white/20 hover:bg-white/40 rounded-full p-3 transition z-10"
-                onClick={(e) => { e.stopPropagation(); next(); }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    next();
+                }}
             >
                 <ChevronRight className="w-6 h-6" />
             </button>
@@ -72,12 +94,19 @@ function Lightbox({ images, startIndex, onClose }) {
                 {images.map((img, i) => (
                     <button
                         key={i}
-                        onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrent(i);
+                        }}
                         className={`flex-shrink-0 w-12 h-12 rounded-md overflow-hidden border-2 transition ${
-                            current === i ? 'border-white' : 'border-white/30'
+                            current === i ? "border-white" : "border-white/30"
                         }`}
                     >
-                        <img src={encodeURI(img.image_path)} alt="" className="w-full h-full object-cover" />
+                        <img
+                            src={encodeURI(img.image_path)}
+                            alt=""
+                            className="w-full h-full object-cover"
+                        />
                     </button>
                 ))}
             </div>
@@ -97,7 +126,9 @@ function ProductImageCarousel({ images, productName }) {
     const next = () => setCurrent((c) => (c === images.length - 1 ? 0 : c + 1));
 
     // Mouse drag
-    const onMouseDown = (e) => { dragStart.current = e.clientX; };
+    const onMouseDown = (e) => {
+        dragStart.current = e.clientX;
+    };
     const onMouseUp = (e) => {
         if (dragStart.current === null) return;
         const diff = dragStart.current - e.clientX;
@@ -107,7 +138,9 @@ function ProductImageCarousel({ images, productName }) {
     };
 
     // Touch swipe
-    const onTouchStart = (e) => { dragStart.current = e.touches[0].clientX; };
+    const onTouchStart = (e) => {
+        dragStart.current = e.touches[0].clientX;
+    };
     const onTouchEnd = (e) => {
         if (dragStart.current === null) return;
         const diff = dragStart.current - e.changedTouches[0].clientX;
@@ -133,11 +166,15 @@ function ProductImageCarousel({ images, productName }) {
                             src={encodeURI(images[current].image_path)}
                             alt={`${productName} ${current + 1}`}
                             className="w-full h-full object-cover pointer-events-none"
-                            onError={() => setImgError((e) => ({ ...e, [current]: true }))}
+                            onError={() =>
+                                setImgError((e) => ({ ...e, [current]: true }))
+                            }
                             draggable={false}
                         />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">No Image</div>
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                            No Image
+                        </div>
                     )}
 
                     {/* Zoom / open lightbox button */}
@@ -156,7 +193,9 @@ function ProductImageCarousel({ images, productName }) {
                                 <span
                                     key={i}
                                     className={`block rounded-full transition-all ${
-                                        current === i ? 'w-4 h-2 bg-white' : 'w-2 h-2 bg-white/50'
+                                        current === i
+                                            ? "w-4 h-2 bg-white"
+                                            : "w-2 h-2 bg-white/50"
                                     }`}
                                 />
                             ))}
@@ -185,13 +224,18 @@ function ProductImageCarousel({ images, productName }) {
 
                 {/* Thumbnails — scrollable */}
                 {images.length > 1 && (
-                    <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+                    <div
+                        className="flex gap-2 overflow-x-auto pb-1"
+                        style={{ scrollbarWidth: "none" }}
+                    >
                         {images.map((img, i) => (
                             <button
                                 key={i}
                                 onClick={() => setCurrent(i)}
                                 className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition ${
-                                    current === i ? 'border-purple-500' : 'border-gray-200 hover:border-purple-300'
+                                    current === i
+                                        ? "border-purple-500"
+                                        : "border-gray-200 hover:border-purple-300"
                                 }`}
                             >
                                 {!imgError[i] ? (
@@ -199,7 +243,12 @@ function ProductImageCarousel({ images, productName }) {
                                         src={encodeURI(img.image_path)}
                                         alt={`thumb ${i + 1}`}
                                         className="w-full h-full object-cover"
-                                        onError={() => setImgError((e) => ({ ...e, [i]: true }))}
+                                        onError={() =>
+                                            setImgError((e) => ({
+                                                ...e,
+                                                [i]: true,
+                                            }))
+                                        }
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-gray-200" />
@@ -211,7 +260,11 @@ function ProductImageCarousel({ images, productName }) {
             </div>
 
             {lightboxOpen && (
-                <Lightbox images={images} startIndex={current} onClose={() => setLightboxOpen(false)} />
+                <Lightbox
+                    images={images}
+                    startIndex={current}
+                    onClose={() => setLightboxOpen(false)}
+                />
             )}
         </>
     );
@@ -220,38 +273,40 @@ function ProductImageCarousel({ images, productName }) {
 // Product Detail Card (layout seperti di gambar)
 function ProductDetailCard({ product }) {
     const [qty, setQty] = useState(1);
-    const [loading, setLoading] = useState(false);
+
+    const { post, processing } = useForm({
+        product_id: product.id,
+        quantity: qty,
+    });
+
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        post(route('cart.add'), {
+            onSuccess: () => {
+                alert('✅ Produk berhasil ditambahkan ke keranjang!');
+                // Optional: refresh cart count via event
+                window.dispatchEvent(new Event('cart-updated'));
+            },
+            onError: () => {
+                alert('❌ Gagal menambahkan ke keranjang');
+            },
+            preserveScroll: true,
+        });
+    };
 
     const discount = product.original_price
         ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
         : 0;
-
-    const handleAddToCart = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch('/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-                body: JSON.stringify({ product_id: product.id, quantity: qty }),
-            });
-            const data = await res.json();
-            if (data.success) alert('Produk berhasil ditambahkan ke keranjang!');
-        } catch {
-            alert('Gagal menambahkan ke keranjang');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                 {/* Left: Image Carousel */}
                 <div className="p-4 md:p-6 bg-gray-50">
-                    <ProductImageCarousel images={product.images || []} productName={product.name} />
+                    <ProductImageCarousel
+                        images={product.images || []}
+                        productName={product.name}
+                    />
                 </div>
 
                 {/* Right: Product Info */}
@@ -272,7 +327,10 @@ function ProductDetailCard({ product }) {
                     <div className="flex items-center gap-2">
                         <div className="flex text-yellow-400">
                             {[...Array(5)].map((_, i) => (
-                                <Star key={i} className="w-4 h-4 fill-current" />
+                                <Star
+                                    key={i}
+                                    className="w-4 h-4 fill-current"
+                                />
                             ))}
                         </div>
                         <span className="text-sm text-gray-500">
@@ -283,12 +341,18 @@ function ProductDetailCard({ product }) {
                     {/* Price */}
                     <div className="flex items-center gap-3 flex-wrap">
                         <span className="text-2xl font-bold text-purple-600">
-                            Rp {new Intl.NumberFormat('id-ID').format(Math.round(product.price))}
+                            Rp{" "}
+                            {new Intl.NumberFormat("id-ID").format(
+                                Math.round(product.price),
+                            )}
                         </span>
                         {product.original_price && (
                             <>
                                 <span className="text-gray-400 line-through text-base">
-                                    Rp {new Intl.NumberFormat('id-ID').format(Math.round(product.original_price))}
+                                    Rp{" "}
+                                    {new Intl.NumberFormat("id-ID").format(
+                                        Math.round(product.original_price),
+                                    )}
                                 </span>
                                 {discount > 0 && (
                                     <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
@@ -299,7 +363,9 @@ function ProductDetailCard({ product }) {
                         )}
                     </div>
 
-                    <p className="text-xs text-gray-500">Gratis ongkir untuk pembelian di atas Rp 100.000</p>
+                    <p className="text-xs text-gray-500">
+                        Gratis ongkir untuk pembelian di atas Rp 100.000
+                    </p>
 
                     {/* Description */}
                     {product.description && (
@@ -311,10 +377,15 @@ function ProductDetailCard({ product }) {
                     {/* Specifications */}
                     {product.specifications?.length > 0 && (
                         <div>
-                            <p className="font-semibold text-gray-800 mb-2 text-sm">Isi Paket:</p>
+                            <p className="font-semibold text-gray-800 mb-2 text-sm">
+                                Isi Paket:
+                            </p>
                             <ul className="space-y-1">
                                 {product.specifications.map((spec, i) => (
-                                    <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                                    <li
+                                        key={i}
+                                        className="flex items-center gap-2 text-sm text-gray-700"
+                                    >
                                         <span className="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0" />
                                         {spec.property}: {spec.value}
                                     </li>
@@ -328,13 +399,20 @@ function ProductDetailCard({ product }) {
                         <div className="flex items-center gap-3 mt-auto">
                             <button
                                 onClick={handleAddToCart}
-                                disabled={loading}
+                                disabled={processing}
                                 className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-full font-bold text-white text-sm transition"
-                                style={{ background: loading ? '#a855f780' : 'linear-gradient(135deg, #a855f7, #ec4899)' }}
+                                style={{
+                                    background: processing
+                                        ? "#a855f780"
+                                        : "linear-gradient(135deg, #a855f7, #ec4899)",
+                                }}
                             >
                                 <ShoppingCart className="w-4 h-4" />
-                                {loading ? 'Menambahkan...' : 'Tambah ke Keranjang'}
+                                {processing
+                                    ? "Menambahkan..."
+                                    : "Tambah ke Keranjang"}
                             </button>
+                            {/* Heart & Share tetap */}
                             <button className="p-3 rounded-full border border-gray-200 hover:border-pink-400 hover:text-pink-500 transition">
                                 <Heart className="w-4 h-4" />
                             </button>
@@ -350,8 +428,16 @@ function ProductDetailCard({ product }) {
 
                     {/* Trust badges */}
                     <div className="grid grid-cols-2 gap-1 pt-2 border-t border-gray-100">
-                        {['Garansi Uang Kembali 100%', 'Pengiriman Cepat & Gratis', 'Produk Berkualitas', 'Pembayaran Aman & Terpercaya'].map((t) => (
-                            <div key={t} className="flex items-center gap-1.5 text-xs text-gray-500">
+                        {[
+                            "Garansi Uang Kembali 100%",
+                            "Pengiriman Cepat & Gratis",
+                            "Produk Berkualitas",
+                            "Pembayaran Aman & Terpercaya",
+                        ].map((t) => (
+                            <div
+                                key={t}
+                                className="flex items-center gap-1.5 text-xs text-gray-500"
+                            >
                                 <CheckCircle className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
                                 {t}
                             </div>
@@ -363,7 +449,6 @@ function ProductDetailCard({ product }) {
     );
 }
 
-
 export default function CategoryShow({ category }) {
     const categoryProducts = category?.products || [];
     const hasProducts = categoryProducts.length > 0;
@@ -374,11 +459,20 @@ export default function CategoryShow({ category }) {
             <div className="bg-secondary-50 py-3 md:py-4">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center space-x-2 text-xs md:text-sm text-secondary-600">
-                        <Link href="/" className="hover:text-primary-600">Beranda</Link>
+                        <Link href="/" className="hover:text-primary-600">
+                            Beranda
+                        </Link>
                         <span>/</span>
-                        <Link href="/categories" className="hover:text-primary-600">Kategori</Link>
+                        <Link
+                            href="/categories"
+                            className="hover:text-primary-600"
+                        >
+                            Kategori
+                        </Link>
                         <span>/</span>
-                        <span className="text-secondary-900 font-semibold truncate">{category.name}</span>
+                        <span className="text-secondary-900 font-semibold truncate">
+                            {category.name}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -394,12 +488,22 @@ export default function CategoryShow({ category }) {
                                     alt={category.name}
                                     loading="lazy"
                                     className="w-full h-full object-cover"
-                                    onError={(e) => { e.target.style.display = 'none'; }}
+                                    onError={(e) => {
+                                        e.target.style.display = "none";
+                                    }}
                                 />
                             </div>
                         )}
-                        <div className={category.image ? 'md:col-span-2' : 'md:col-span-3'}>
-                            <h1 className="text-2xl md:text-4xl font-bold mb-3">{category.name}</h1>
+                        <div
+                            className={
+                                category.image
+                                    ? "md:col-span-2"
+                                    : "md:col-span-3"
+                            }
+                        >
+                            <h1 className="text-2xl md:text-4xl font-bold mb-3">
+                                {category.name}
+                            </h1>
                             {category.description && (
                                 <p className="text-sm md:text-lg leading-relaxed mb-4 text-white/90">
                                     {category.description}
@@ -423,7 +527,10 @@ export default function CategoryShow({ category }) {
                             </h2>
                             <div className="flex flex-col gap-6">
                                 {categoryProducts.map((product) => (
-                                    <ProductDetailCard key={product.id} product={product} />
+                                    <ProductDetailCard
+                                        key={product.id}
+                                        product={product}
+                                    />
                                 ))}
                             </div>
                         </>
@@ -432,7 +539,9 @@ export default function CategoryShow({ category }) {
                             <p className="text-secondary-600 text-base md:text-lg mb-4">
                                 Tidak ada produk dalam kategori ini
                             </p>
-                            <PrimaryButton href="/categories">Kembali ke Kategori</PrimaryButton>
+                            <PrimaryButton href="/categories">
+                                Kembali ke Kategori
+                            </PrimaryButton>
                         </div>
                     )}
                 </div>

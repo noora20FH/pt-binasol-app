@@ -2,82 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CartController extends Controller
 {
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     /**
-     * View cart page
+     * Tampilkan halaman Keranjang
      */
     public function viewCart()
     {
-        return inertia('Cart/Index');
+        return Inertia::render('Cart/Index');
     }
 
     /**
-     * Get current cart from session
+     * Ambil data keranjang (JSON - dipakai oleh frontend via AJAX)
      */
-    public function getCart()
+    public function getCart(Request $request)
     {
-        $cart = session()->get('cart', []);
-        $cartItems = [];
-        $total = 0;
+        $data = $this->cartService->getCartData($request);
 
-        foreach ($cart as $productId => $quantity) {
-            $product = Product::find($productId);
-            if ($product) {
-                $itemTotal = $product->price * $quantity;
-                $cartItems[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => $quantity,
-                    'image' => $product->images()->first()?->image_path,
-                    'total' => $itemTotal,
-                ];
-                $total += $itemTotal;
-            }
-        }
-
-        return response()->json([
-            'items' => $cartItems,
-            'total' => $total,
-            'count' => count($cartItems),
-        ]);
+        return response()->json($data);
     }
 
     /**
-     * Add product to cart
+     * Tambah produk ke keranjang
      */
     public function addToCart(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity'   => 'required|integer|min:1',
         ]);
 
-        $cart = session()->get('cart', []);
-        $productId = $validated['product_id'];
-        $quantity = $validated['quantity'];
+        $result = $this->cartService->addToCart(
+            $request,
+            $validated['product_id'],
+            $validated['quantity']
+        );
 
-        if (isset($cart[$productId])) {
-            $cart[$productId] += $quantity;
-        } else {
-            $cart[$productId] = $quantity;
-        }
-
-        session()->put('cart', $cart);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
-            'cart' => $cart,
-        ]);
+        return redirect()->back()
+            ->with('success', $result['message']);
     }
 
     /**
-     * Remove product from cart
+     * Hapus produk dari keranjang
      */
     public function removeFromCart(Request $request)
     {
@@ -85,48 +62,40 @@ class CartController extends Controller
             'product_id' => 'required|exists:products,id',
         ]);
 
-        $cart = session()->get('cart', []);
-        unset($cart[$validated['product_id']]);
-        session()->put('cart', $cart);
+        $result = $this->cartService->removeFromCart($request, $validated['product_id']);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Produk dihapus dari keranjang',
-            'cart' => $cart,
-        ]);
+        return redirect()->back()
+            ->with('success', $result['message']);
     }
 
     /**
-     * Update product quantity
+     * Update quantity
      */
     public function updateCart(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
+            'quantity'   => 'required|integer|min:1',
         ]);
 
-        $cart = session()->get('cart', []);
-        $cart[$validated['product_id']] = $validated['quantity'];
-        session()->put('cart', $cart);
+        $result = $this->cartService->updateQuantity(
+            $request,
+            $validated['product_id'],
+            $validated['quantity']
+        );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Keranjang diperbarui',
-            'cart' => $cart,
-        ]);
+        return redirect()->back()
+            ->with('success', $result['message']);
     }
 
     /**
-     * Clear entire cart
+     * Kosongkan keranjang
      */
-    public function clearCart()
+    public function clearCart(Request $request)
     {
-        session()->put('cart', []);
+        $result = $this->cartService->clearCart($request);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Keranjang dikosongkan',
-        ]);
+        return redirect()->back()
+            ->with('success', $result['message']);
     }
 }

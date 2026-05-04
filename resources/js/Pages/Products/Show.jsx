@@ -248,6 +248,7 @@ export default function ProductShow({ product, relatedProducts }) {
         product_id: product.id,
         quantity: quantity,
     });
+    const { auth } = usePage().props;
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -401,20 +402,29 @@ export default function ProductShow({ product, relatedProducts }) {
                             {/* Add to Cart */}
                             {product.stock > 0 && (
                                 <div className="flex items-center space-x-4 mb-6">
-                                    {/* quantity selector tetap sama */}
-
-                                    <button
-                                        onClick={handleAddToCart}
-                                        disabled={processing}
-                                        className="flex-1 flex items-center justify-center gap-2 py-3 px-6
+                                    {auth.user ? (
+                                        <button
+                                            onClick={handleAddToCart}
+                                            disabled={processing}
+                                            className="flex-1 flex items-center justify-center gap-2 py-3 px-6
                            bg-[#D98344] hover:bg-[#C36F3A] disabled:opacity-50
                            text-white rounded-lg font-bold text-base transition"
-                                    >
-                                        <ShoppingCart className="w-5 h-5" />
-                                        {processing
-                                            ? "Menambahkan..."
-                                            : "Tambah ke Keranjang"}
-                                    </button>
+                                        >
+                                            <ShoppingCart className="w-5 h-5" />
+                                            {processing
+                                                ? "Menambahkan..."
+                                                : "Tambah ke Keranjang"}
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href={route("login")}
+                                            className="flex-1 flex items-center justify-center gap-2 py-3 px-6
+                           bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-base transition"
+                                        >
+                                            <ShoppingCart className="w-5 h-5" />
+                                            Login untuk belanja
+                                        </Link>
+                                    )}
                                 </div>
                             )}
 

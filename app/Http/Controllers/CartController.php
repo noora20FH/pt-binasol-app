@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
 
 class CartController extends Controller
 {
@@ -24,13 +26,18 @@ class CartController extends Controller
     }
 
     /**
-     * Ambil data keranjang (JSON - dipakai oleh frontend via AJAX)
+     * Ambil data keranjang (JSON) - DIPAKAI FRONTEND
+     * ← INI YANG DI PERBAIKI
      */
-    public function getCart(Request $request)
+    public function getCart()
     {
-        $data = $this->cartService->getCartData($request);
+        $data = $this->cartService->getCartData(request());
 
-        return response()->json($data);
+        return response()->json([
+            'items' => $data['items'],
+            'total' => $data['total'],
+            'count' => $data['count'],
+        ]);
     }
 
     /**
@@ -49,8 +56,7 @@ class CartController extends Controller
             $validated['quantity']
         );
 
-        return redirect()->back()
-            ->with('success', $result['message']);
+        return redirect()->back()->with('success', $result['message']);
     }
 
     /**
@@ -64,8 +70,7 @@ class CartController extends Controller
 
         $result = $this->cartService->removeFromCart($request, $validated['product_id']);
 
-        return redirect()->back()
-            ->with('success', $result['message']);
+        return redirect()->back()->with('success', $result['message']);
     }
 
     /**
@@ -84,8 +89,7 @@ class CartController extends Controller
             $validated['quantity']
         );
 
-        return redirect()->back()
-            ->with('success', $result['message']);
+        return redirect()->back()->with('success', $result['message']);
     }
 
     /**
@@ -95,7 +99,6 @@ class CartController extends Controller
     {
         $result = $this->cartService->clearCart($request);
 
-        return redirect()->back()
-            ->with('success', $result['message']);
+        return redirect()->back()->with('success', $result['message']);
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class CartService
 {
@@ -70,8 +71,8 @@ class CartService
     {
         $cart = $this->getOrCreateCart($request);
         CartItem::where('cart_id', $cart->id)
-                ->where('product_id', $productId)
-                ->delete();
+            ->where('product_id', $productId)
+            ->delete();
 
         return [
             'success' => true,
@@ -87,8 +88,8 @@ class CartService
         $cart = $this->getOrCreateCart($request);
 
         CartItem::where('cart_id', $cart->id)
-                ->where('product_id', $productId)
-                ->update(['quantity' => $quantity]);
+            ->where('product_id', $productId)
+            ->update(['quantity' => $quantity]);
 
         return [
             'success' => true,
@@ -119,12 +120,17 @@ class CartService
         $cart->load(['items.product.images']);
 
         $items = $cart->items->map(function ($item) {
+            $image = $item->product->images->first();
+            $imagePath = $image && $image->image_path
+                ? Storage::url(ltrim($image->image_path, '/'))
+                : null;
+
             return [
                 'id'       => $item->product->id,
                 'name'     => $item->product->name,
                 'price'    => $item->unit_price ?? $item->product->price,
                 'quantity' => $item->quantity,
-                'image'    => $item->product->images->first()?->image_path,
+                'image'    => $imagePath,                    // ← full URL
                 'total'    => ($item->unit_price ?? $item->product->price) * $item->quantity,
             ];
         });

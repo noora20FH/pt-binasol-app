@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Link,useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import PublicLayout from "@/Layouts/PublicLayout";
 import { PrimaryButton } from "@/Components/Button";
 import {
@@ -272,6 +272,7 @@ function ProductImageCarousel({ images, productName }) {
 
 // Product Detail Card (layout seperti di gambar)
 function ProductDetailCard({ product }) {
+    const { auth } = usePage().props;
     const [qty, setQty] = useState(1);
 
     const { post, processing } = useForm({
@@ -281,21 +282,25 @@ function ProductDetailCard({ product }) {
 
     const handleAddToCart = (e) => {
         e.preventDefault();
-        post(route('cart.add'), {
+        post(route("cart.add"), {
             onSuccess: () => {
-                alert('✅ Produk berhasil ditambahkan ke keranjang!');
+                alert("✅ Produk berhasil ditambahkan ke keranjang!");
                 // Optional: refresh cart count via event
-                window.dispatchEvent(new Event('cart-updated'));
+                window.dispatchEvent(new Event("cart-updated"));
             },
             onError: () => {
-                alert('❌ Gagal menambahkan ke keranjang');
+                alert("❌ Gagal menambahkan ke keranjang");
             },
             preserveScroll: true,
         });
     };
 
     const discount = product.original_price
-        ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+        ? Math.round(
+              ((product.original_price - product.price) /
+                  product.original_price) *
+                  100,
+          )
         : 0;
 
     return (
@@ -397,21 +402,31 @@ function ProductDetailCard({ product }) {
                     {/* Add to Cart */}
                     {product.stock > 0 ? (
                         <div className="flex items-center gap-3 mt-auto">
-                            <button
-                                onClick={handleAddToCart}
-                                disabled={processing}
-                                className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-full font-bold text-white text-sm transition"
-                                style={{
-                                    background: processing
-                                        ? "#a855f780"
-                                        : "linear-gradient(135deg, #a855f7, #ec4899)",
-                                }}
-                            >
-                                <ShoppingCart className="w-4 h-4" />
-                                {processing
-                                    ? "Menambahkan..."
-                                    : "Tambah ke Keranjang"}
-                            </button>
+                            {auth.user ? (
+                                <button
+                                    onClick={handleAddToCart}
+                                    disabled={processing}
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-full font-bold text-white text-sm transition"
+                                    style={{
+                                        background: processing
+                                            ? "#a855f780"
+                                            : "linear-gradient(135deg, #a855f7, #ec4899)",
+                                    }}
+                                >
+                                    <ShoppingCart className="w-4 h-4" />
+                                    {processing
+                                        ? "Menambahkan..."
+                                        : "Tambah ke Keranjang"}
+                                </button>
+                            ) : (
+                                <Link
+                                    href={route("login")}
+                                    className="flex-1 flex items-center justify-center gap-2 py-3 px-5 rounded-full font-bold text-white text-sm transition bg-amber-600 hover:bg-amber-700"
+                                >
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Login untuk belanja
+                                </Link>
+                            )}
                             {/* Heart & Share tetap */}
                             <button className="p-3 rounded-full border border-gray-200 hover:border-pink-400 hover:text-pink-500 transition">
                                 <Heart className="w-4 h-4" />

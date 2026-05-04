@@ -48,17 +48,21 @@ Route::get('/films/{film}', [FilmController::class, 'show'])->name('films.show')
 // Sewa Ruangan
 Route::get('/sewa-ruangan', [RoomController::class, 'index'])->name('rooms.index');
 
-// Shopping Cart
-Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
-Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
-Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
-Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
 // Shopping Cart - Customer only
 Route::middleware(['auth', 'role:customer'])->group(function () {
+// === SHOPPING CART (hanya user login) ===
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+
+    // === CHECKOUT ===
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+    // === ORDER HISTORY (Riwayat Pesanan) ===
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'userShow'])->name('orders.show');
 });

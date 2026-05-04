@@ -16,8 +16,8 @@ export default function Cart() {
         try {
             const response = await fetch(route('cart.get'));
             const data = await response.json();
-            setCartItems(data.items);
-            setTotal(data.total);
+            setCartItems(data.items || []);
+            setTotal(data.total || 0);
         } catch (error) {
             console.error('Error fetching cart:', error);
         } finally {
@@ -25,69 +25,43 @@ export default function Cart() {
         }
     };
 
-    const updateQuantity = async (productId, newQuantity) => {
+    // ── Perbaikan: pakai router.post Inertia (otomatis handle CSRF) ──
+    const updateQuantity = (productId, newQuantity) => {
         if (newQuantity < 1) return;
-        
-        try {
-            const response = await fetch(route('cart.update'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: newQuantity,
-                }),
-            });
-            
-            if (response.ok) {
-                fetchCart();
-            }
-        } catch (error) {
-            console.error('Error updating cart:', error);
-        }
+
+        router.post(route('cart.update'), {
+            product_id: productId,
+            quantity: newQuantity,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => fetchCart(),
+            onError: () => alert('❌ Gagal mengupdate jumlah barang'),
+        });
     };
 
-    const removeItem = async (productId) => {
-        try {
-            const response = await fetch(route('cart.remove'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                }),
-            });
-            
-            if (response.ok) {
-                fetchCart();
-            }
-        } catch (error) {
-            console.error('Error removing item:', error);
-        }
+    const removeItem = (productId) => {
+        if (!confirm('Hapus produk ini dari keranjang?')) return;
+
+        router.post(route('cart.remove'), {
+            product_id: productId,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => fetchCart(),
+        });
     };
 
-    const clearCart = async () => {
+    const clearCart = () => {
         if (!confirm('Apakah anda yakin ingin mengosongkan keranjang?')) return;
-        
-        try {
-            const response = await fetch(route('cart.clear'), {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content,
-                },
-            });
-            
-            if (response.ok) {
+
+        router.post(route('cart.clear'), {}, {
+            preserveScroll: true,
+            onSuccess: () => {
                 setCartItems([]);
                 setTotal(0);
-            }
-        } catch (error) {
-            console.error('Error clearing cart:', error);
-        }
+                // fetchCart(); // optional, karena sudah di-set kosong
+            },
+            onError: () => alert('❌ Gagal mengosongkan keranjang'),
+        });
     };
 
     const formatPrice = (price) => {
@@ -105,11 +79,11 @@ export default function Cart() {
 
     if (loading) {
         return (
-            <PublicLayout title="Keranjang Belanja" description="Lihat keranjang belanja Anda">
+            <PublicLayout title="Keranjang Belanja">
                 <div className="bg-gray-50 min-h-screen py-8">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-center items-center py-20">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D98344]"></div>
                         </div>
                     </div>
                 </div>
@@ -120,12 +94,12 @@ export default function Cart() {
     // Empty State
     if (cartItems.length === 0) {
         return (
-            <PublicLayout title="Keranjang Belanja" description="Lihat keranjang belanja Anda">
+            <PublicLayout title="Keranjang Belanja">
                 <div className="bg-gray-50 min-h-screen py-8">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <button
                             onClick={() => router.get(route('products.index'))}
-                            className="flex items-center gap-2 text-gray-600 hover:text-primary-600 mb-8 transition-colors"
+                            className="flex items-center gap-2 text-gray-600 hover:text-[#D98344] mb-8 transition-colors"
                         >
                             <ArrowLeft className="w-5 h-5" />
                             Lanjut Belanja
@@ -141,7 +115,7 @@ export default function Cart() {
                             </p>
                             <button
                                 onClick={() => router.get(route('products.index'))}
-                                className="px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all active:scale-95"
+                                className="px-8 py-3 bg-[#D98344] hover:bg-[#C36F3A] text-white font-semibold rounded-xl transition-all active:scale-95"
                             >
                                 Mulai Belanja
                             </button>
@@ -153,12 +127,12 @@ export default function Cart() {
     }
 
     return (
-        <PublicLayout title="Keranjang Belanja" description="Lihat dan kelola keranjang belanja Anda">
+        <PublicLayout title="Keranjang Belanja">
             <div className="bg-gray-50 min-h-screen py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <button
                         onClick={() => router.get(route('products.index'))}
-                        className="flex items-center gap-2 text-gray-600 hover:text-primary-600 mb-8 transition-colors"
+                        className="flex items-center gap-2 text-gray-600 hover:text-[#D98344] mb-8 transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5" />
                         Lanjut Belanja
@@ -171,13 +145,13 @@ export default function Cart() {
                         <div className="lg:col-span-2 space-y-4">
                             {/* Free Shipping Progress */}
                             {remainingForFreeShipping > 0 && (
-                                <div className="bg-primary-50 border border-primary-200 rounded-xl p-4">
-                                    <p className="text-primary-800 font-semibold">
+                                <div className="bg-[#D98344]/10 border border-[#D98344]/30 rounded-xl p-4">
+                                    <p className="text-[#D98344] font-semibold">
                                         Belanja Rp {remainingForFreeShipping.toLocaleString('id-ID')} lagi untuk mendapatkan gratis ongkir!
                                     </p>
                                     <div className="mt-3 bg-white rounded-full h-2 overflow-hidden">
                                         <div
-                                            className="bg-primary-500 h-full transition-all duration-500"
+                                            className="bg-[#D98344] h-full transition-all duration-500"
                                             style={{ width: `${(total / freeShippingThreshold) * 100}%` }}
                                         />
                                     </div>
@@ -208,11 +182,11 @@ export default function Cart() {
                                         <div className="flex-1 min-w-0">
                                             <Link
                                                 href={route('products.show', item.id)}
-                                                className="font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-primary-600 transition"
+                                                className="font-semibold text-gray-900 mb-1 line-clamp-2 hover:text-[#D98344] transition"
                                             >
                                                 {item.name}
                                             </Link>
-                                            <p className="text-lg font-bold text-primary-600">
+                                            <p className="text-lg font-bold text-[#D98344]">
                                                 {formatPrice(item.price)}
                                             </p>
                                         </div>
@@ -225,15 +199,15 @@ export default function Cart() {
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
 
-                                            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-2">
+                                            <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-2 py-1">
                                                 <button
-                                                    onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                                     className="p-1 hover:bg-gray-200 rounded transition-colors disabled:opacity-50"
                                                     disabled={item.quantity <= 1}
                                                 >
                                                     <Minus className="w-4 h-4" />
                                                 </button>
-                                                <span className="w-8 text-center font-semibold">{item.quantity}</span>
+                                                <span className="w-8 text-center font-semibold text-gray-900">{item.quantity}</span>
                                                 <button
                                                     onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                                     className="p-1 hover:bg-gray-200 rounded transition-colors"
@@ -276,18 +250,19 @@ export default function Cart() {
                                         </span>
                                     </div>
                                     <div className="border-t border-gray-200 pt-3">
-                                        <div className="flex justify-between">
+                                        <div className="flex justify-between items-baseline">
                                             <span className="text-lg font-bold text-gray-900">Total</span>
-                                            <span className="text-2xl font-bold text-primary-600">
+                                            <span className="text-3xl font-bold text-[#D98344]">
                                                 {formatPrice(grandTotal)}
                                             </span>
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Tombol Checkout – sudah diperbaiki stylenya */}
                                 <button
-                                    onClick={() => router.get(route('checkout.index'))}
-                                    className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-primary-500/30"
+                                    onClick={() => router.visit(route('checkout.index'))}
+                                    className="w-full py-4 bg-[#D98344] hover:bg-[#C36F3A] text-white font-bold text-lg rounded-2xl shadow-lg shadow-[#D98344]/30 transition-all active:scale-[0.97]"
                                 >
                                     Lanjut ke Checkout
                                 </button>

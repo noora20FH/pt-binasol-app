@@ -11,8 +11,9 @@ use App\Http\Controllers\CarouselSlideController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomController;       
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,6 +55,23 @@ Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add')
 Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
 Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+// Shopping Cart - Customer only
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart.view');
+    Route::get('/cart/data', [CartController::class, 'getCart'])->name('cart.get');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    Route::post('/cart/update', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/clear', [CartController::class, 'clearCart'])->name('cart.clear');
+
+    // Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+
+    // Customer Orders
+    Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'userShow'])->name('orders.show');
+});
 
 // Dashboard & authenticated routes
 Route::get('/dashboard', function () {

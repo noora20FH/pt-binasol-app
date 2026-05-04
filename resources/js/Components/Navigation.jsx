@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, ShoppingCart, Package } from "lucide-react";
 
 export default function Navigation() {
     const [isOpen, setIsOpen] = useState(false);
@@ -60,55 +60,94 @@ export default function Navigation() {
                         ))}
                     </div>
 
-                    {/* Auth Section - Desktop with Dropdown */}
-                    <div className="hidden md:flex items-center relative">
+                    {/* Auth Section - Desktop with Cart, Orders & User Dropdown */}
+                    <div className="hidden md:flex items-center gap-x-4">
                         {auth.user ? (
-                            <div className="relative">
-                                {/* Trigger Dropdown */}
-                                <button
-                                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                                    className="flex items-center gap-3 px-4 py-2 transition hover:bg-[#fff7ed] rounded-2xl focus:outline-none"
-                                >
-                                    {/* Avatar dengan inisial */}
-                                    <div className="w-9 h-9 bg-[#ea580c] text-white rounded-2xl flex items-center justify-center font-semibold text-lg shadow-sm">
-                                        {getInitial(auth.user.name)}
-                                    </div>
-
-                                    {/* Nama + Email */}
-                                    <div className="flex flex-col text-left">
-                                        <span className="text-[#44403c] font-medium">
-                                            {auth.user.name}
-                                        </span>
-                                        <span className="text-xs text-[#78716b]">
-                                            {auth.user.email}
-                                        </span>
-                                    </div>
-                                </button>
-
-                                {/* Dropdown Menu */}
-                                {dropdownOpen && (
-                                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-3xl shadow-2xl border border-gray-100 py-2 z-50 overflow-hidden">
+                            <>
+                                {/* Cart & Order History - hanya untuk Customer */}
+                                {auth.user.role === "customer" && (
+                                    <>
                                         <Link
-                                            href="/profile"
-                                            className="flex items-center gap-3 px-5 py-3 text-[#44403c] hover:bg-[#fff7ed] transition"
-                                            onClick={() => setDropdownOpen(false)}
+                                            href={route("cart.view")}
+                                            className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                            title="Keranjang"
                                         >
-                                            <span className="text-lg">👤</span>
-                                            <span className="font-medium">Profil</span>
+                                            <ShoppingCart className="w-5 h-5" />
                                         </Link>
 
-                                        <button
-                                            onClick={handleLogout}
-                                            className="flex w-full items-center gap-3 px-5 py-3 text-red-600 hover:bg-red-50 transition font-medium border-t border-gray-100"
+                                        <Link
+                                            href={route("orders.index")}
+                                            className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                            title="Riwayat Pesanan"
                                         >
-                                            <LogOut className="w-5 h-5" />
-                                            <span>Logout</span>
-                                        </button>
-                                    </div>
+                                            <Package className="w-5 h-5" />
+                                        </Link>
+                                    </>
                                 )}
-                            </div>
+
+                                {/* User Avatar + Dropdown */}
+                                <div className="relative">
+                                    {/* Trigger Dropdown */}
+                                    <button
+                                        onClick={() =>
+                                            setDropdownOpen(!dropdownOpen)
+                                        }
+                                        className="flex items-center gap-3 px-4 py-2 transition hover:bg-[#fff7ed] rounded-2xl focus:outline-none"
+                                    >
+                                        {/* Avatar dengan inisial */}
+                                        <div className="w-9 h-9 bg-[#ea580c] text-white rounded-2xl flex items-center justify-center font-semibold text-lg shadow-sm">
+                                            {getInitial(auth.user.name)}
+                                        </div>
+
+                                        {/* Nama + Email */}
+                                        <div className="flex flex-col text-left">
+                                            <span className="text-[#44403c] font-medium">
+                                                {auth.user.name}
+                                            </span>
+                                            <span className="text-xs text-[#78716b]">
+                                                {auth.user.email}
+                                            </span>
+                                        </div>
+                                    </button>
+
+                                    {/* Dropdown Menu */}
+                                    {dropdownOpen && (
+                                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-3xl shadow-2xl border border-gray-100 py-2 z-50 overflow-hidden">
+                                            <Link
+                                                href="/profile"
+                                                className="flex items-center gap-3 px-5 py-3 text-[#44403c] hover:bg-[#fff7ed] transition"
+                                                onClick={() =>
+                                                    setDropdownOpen(false)
+                                                }
+                                            >
+                                                <span className="text-lg">
+                                                    👤
+                                                </span>
+                                                <span className="font-medium">
+                                                    Profil
+                                                </span>
+                                            </Link>
+
+                                            <button
+                                                onClick={handleLogout}
+                                                className="flex w-full items-center gap-3 px-5 py-3 text-red-600 hover:bg-red-50 transition font-medium border-t border-gray-100"
+                                            >
+                                                <LogOut className="w-5 h-5" />
+                                                <span>Logout</span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         ) : (
                             <>
+                                <Link
+                                    href={route("cart.view")}
+                                    className="p-2 text-secondary-700 hover:text-primary-600 transition relative"
+                                    title="Keranjang"
+                                >
+                                    <ShoppingCart className="w-5 h-5" />
+                                </Link>
                                 <Link
                                     href="/login"
                                     className="px-5 py-2 text-[#44403c] hover:text-[#ea580c] transition font-medium"
@@ -130,7 +169,11 @@ export default function Navigation() {
                         onClick={() => setIsOpen(!isOpen)}
                         className="md:hidden text-[#44403c]"
                     >
-                        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        {isOpen ? (
+                            <X className="w-6 h-6" />
+                        ) : (
+                            <Menu className="w-6 h-6" />
+                        )}
                     </button>
                 </div>
 
@@ -156,6 +199,26 @@ export default function Navigation() {
 
                         {auth.user ? (
                             <>
+                                {auth.user.role === "customer" && (
+                                    <>
+                                        <Link
+                                            href={route("cart.view")}
+                                            className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <ShoppingCart className="w-4 h-4" />
+                                            Keranjang
+                                        </Link>
+                                        <Link
+                                            href={route("orders.index")}
+                                            className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <Package className="w-4 h-4" />
+                                            Pesanan Saya
+                                        </Link>
+                                    </>
+                                )}
                                 <Link
                                     href="/profile"
                                     className="flex items-center gap-3 px-4 py-3 bg-[#fff7ed] rounded-2xl transition"
@@ -175,6 +238,14 @@ export default function Navigation() {
                             </>
                         ) : (
                             <>
+                                <Link
+                                    href={route("cart.view")}
+                                    className="flex items-center gap-2 px-4 py-2 text-secondary-700 hover:bg-primary-50 rounded transition"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <ShoppingCart className="w-4 h-4" />
+                                    Keranjang
+                                </Link>
                                 <Link
                                     href="/login"
                                     className="block px-4 py-2 text-[#44403c] hover:bg-[#fff7ed] rounded transition"

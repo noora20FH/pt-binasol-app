@@ -78,4 +78,76 @@ class OrderController extends Controller
 
         return redirect()->back();
     }
+
+    /**
+     * Get orders for authenticated customer
+     */
+    public function userOrders()
+    {
+        $user = auth()->user();
+        
+        $orders = Order::with(['items.product.images'])
+            ->where('user_id', $user->id)
+            ->orWhere(function ($query) use ($user) {
+                $query->whereNull('user_id')
+                    ->where('customer_email', $user->email);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return inertia('Orders/Index', [
+            'orders' => $orders,
+        ]);
+    }
+
+    /**
+     * Show order detail for customer
+     */
+    public function userShow(Order $order)
+    {
+        $user = auth()->user();
+        
+        // Check if order belongs to user
+        if ($order->user_id !== $user->id && $order->customer_email !== $user->email) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini');
+        }
+
+        $order->load(['items.product.images', 'user']);
+
+        // Calculate subtotal, shipping, and tax
+        $subtotal = $order->items->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+        
+        $freeShippingThreshold = 500000;
+        $shipping = $subtotal >= $freeShippingThreshold ? 0 : 25000;
+        $tax = $order->total_amount - $subtotal - $shipping;
+
+        return inertia('Orders/Show', [
+            'order' => [
+                'id' => $order->id,
+                'order_number' => $order->order_number,
+                'created_at' => $order->created_at,
+                'total_amount' => $order->total_amount,
+                'payment_status' => $order->payment_status,
+                'payment_type' => $order->payment_type,
+                'customer_name' => $order->customer_name,
+                'customer_email' => $order->customer_email,
+                'customer_phone' => '', // Not stored in db yet
+                'customer_address' => $order->customer_address,
+                'items' => $order->items->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'product_name' => $item->product->name,
+                        'quantity' => $item->quantity,
+                        'price' => $item->price,
+                        'image' => $item->product->images->first()?->image_path,
+                    ];
+                }),
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'tax' => $tax,
+            ],
+        ]);
+    }
 }

@@ -33,7 +33,7 @@ class CartController extends Controller
                     'name' => $product->name,
                     'price' => $product->price,
                     'quantity' => $quantity,
-                    'image' => $product->images()->first()?->image_url,
+                    'image' => $product->images()->first()?->image_path,
                     'total' => $itemTotal,
                 ];
                 $total += $itemTotal;

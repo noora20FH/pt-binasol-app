@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -82,10 +84,13 @@ class OrderController extends Controller
     /**
      * Get orders for authenticated customer
      */
+    /**
+     * Get orders for authenticated customer
+     */
     public function userOrders()
     {
         $user = auth()->user();
-        
+
         $orders = Order::with(['items.product.images'])
             ->where('user_id', $user->id)
             ->orWhere(function ($query) use ($user) {
@@ -95,8 +100,35 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Transformasi data agar struktur image_url konsisten & full URL
+        // (menggunakan Storage::url jika kolom image_path ada)
+        $transformedOrders = $orders->map(function ($order) {
+            return [
+                'id'              => $order->id,
+                'order_number'    => $order->order_number,
+                'created_at'      => $order->created_at,
+                'total_amount'    => $order->total_amount,
+                'payment_status'  => $order->payment_status,
+                'items'           => $order->items->map(function ($item) {
+                    $firstImage = $item->product?->images?->first();
+                    $imageUrl   = $firstImage?->image_url
+                        ?? ($firstImage?->image_path ? Storage::url($firstImage->image_path) : null);
+
+                    return [
+                        'id'       => $item->id,
+                        'product'  => [
+                            'name'   => $item->product?->name ?? 'Produk',
+                            'images' => $imageUrl ? [['image_url' => $imageUrl]] : [],
+                        ],
+                        'quantity' => $item->quantity,
+                        'price'    => $item->price,
+                    ];
+                })->values(),
+            ];
+        })->values();
+
         return inertia('Orders/Index', [
-            'orders' => $orders,
+            'orders' => $transformedOrders,
         ]);
     }
 
@@ -106,7 +138,7 @@ class OrderController extends Controller
     public function userShow(Order $order)
     {
         $user = auth()->user();
-        
+
         // Check if order belongs to user
         if ($order->user_id !== $user->id && $order->customer_email !== $user->email) {
             abort(403, 'Anda tidak memiliki akses ke pesanan ini');
@@ -118,7 +150,7 @@ class OrderController extends Controller
         $subtotal = $order->items->sum(function ($item) {
             return $item->price * $item->quantity;
         });
-        
+
         $freeShippingThreshold = 500000;
         $shipping = $subtotal >= $freeShippingThreshold ? 0 : 25000;
         $tax = $order->total_amount - $subtotal - $shipping;

@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminFilmController;
 use App\Http\Controllers\Admin\AdminTeamMemberController;
 use App\Http\Controllers\Admin\AdminCarouselSlideController;
+use App\Http\Controllers\MidtransNotificationController;
 
 
 // Public Routes (guests & customers)
@@ -71,6 +72,13 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'redirect.admin.cms'])->name('dashboard');
+
+Route::post('/midtrans/notification', [MidtransNotificationController::class, 'handle'])
+    ->name('midtrans.notification');
+
+Route::get('/test-webhook', function () {
+    return 'Webhook route OK - POST method siap';
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

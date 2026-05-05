@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import PublicLayout from "@/Layouts/PublicLayout";
 import {
     ShoppingCart,

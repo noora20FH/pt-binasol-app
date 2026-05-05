@@ -11,6 +11,8 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Midtrans\Snap;
+use Midtrans\Config;
 
 class CheckoutController extends Controller
 {
@@ -73,10 +75,7 @@ class CheckoutController extends Controller
         $cartData = $this->cartService->getCartData($request);
 
         if (empty($cartData['items'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Keranjang belanja kosong',
-            ], 400);
+            return response()->json(['success' => false, 'message' => 'Keranjang kosong'], 400);
         }
 
         $subtotal = $cartData['total'];
@@ -95,7 +94,7 @@ class CheckoutController extends Controller
                 'user_id'          => auth()->id(),
                 'customer_name'    => $validated['customer_name'],
                 'customer_email'   => $validated['customer_email'],
-                'customer_phone'   => $validated['customer_phone'],   // ← disimpan (pastikan kolom ada)
+                'customer_phone'   => $validated['customer_phone'],
                 'customer_address' => $fullAddress,
                 'total_amount'     => $total,
                 'payment_status'   => 'pending',
@@ -103,7 +102,7 @@ class CheckoutController extends Controller
                 'notes'            => $validated['notes'] ?? null,
             ]);
 
-            // Simpan order items dari cart_items
+            // Simpan items
             foreach ($cartData['items'] as $item) {
                 OrderItem::create([
                     'order_id'   => $order->id,
@@ -113,10 +112,36 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Kosongkan keranjang (DB-based)
             $this->cartService->clearCart($request);
 
+            // === MIDTRANS SNAP TOKEN ===
+            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            \Midtrans\Config::$isProduction = config('midtrans.is_production');
+            \Midtrans\Config::$isSanitized = true;
+            \Midtrans\Config::$is3ds = true;
+
+            $snapToken = \Midtrans\Snap::getSnapToken([
+                'transaction_details' => [
+                    'order_id'     => $order->order_number,
+                    'gross_amount' => (int) $order->total_amount,
+                ],
+                'customer_details' => [
+                    'first_name' => $validated['customer_name'],
+                    'email'      => $validated['customer_email'],
+                    'phone'      => $validated['customer_phone'],
+                ],
+                'item_details' => $cartData['items']->map(fn($item) => [
+                    'id'       => $item['id'],
+                    'price'    => (int) $item['price'],
+                    'quantity' => $item['quantity'],
+                    'name'     => $item['name'],
+                ])->toArray(),
+            ]);
+
+            $order->update(['snap_token' => $snapToken]);
+
             DB::commit();
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => true,
@@ -124,22 +149,18 @@ class CheckoutController extends Controller
                         'id'            => $order->id,
                         'order_number'  => $order->order_number,
                         'total_amount'  => $order->total_amount,
-                        'payment_status' => $order->payment_status,
+                        'payment_status'=> $order->payment_status,
+                        'snap_token'    => $snapToken,   // ← tambahkan ini
                     ],
                 ]);
             }
 
-            // Fallback untuk Inertia
             return redirect()->route('orders.show', $order->id)
                 ->with('success', 'Pesanan berhasil dibuat!');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Checkout Error: ' . $e->getMessage());
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.',
-            ], 500);
+            \Illuminate\Support\Facades\Log::error('Checkout Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan.'], 500);
         }
     }
 }

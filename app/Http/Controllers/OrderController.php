@@ -176,6 +176,7 @@ class OrderController extends Controller
                         'image' => $item->product->images->first()?->image_path,
                     ];
                 }),
+                'snap_token' => $order->snap_token,
                 'subtotal' => $subtotal,
                 'shipping' => $shipping,
                 'tax' => $tax,

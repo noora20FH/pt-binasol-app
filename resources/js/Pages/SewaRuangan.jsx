@@ -190,7 +190,7 @@ function RoomCard({ room }) {
                     )}
 
                     <a
-                        href={`https://wa.me/6289513822017?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20tertarik%20untuk%20menyewa%20ruangan%20*${encodeURIComponent(room.name)}*. Mohon%20informasi%20lebih%20lanjut%20dan%20ketersediaannya.`}
+                        href={`https://wa.me/6289651969329?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20tertarik%20untuk%20menyewa%20ruangan%20*${encodeURIComponent(room.name)}*. Mohon%20informasi%20lebih%20lanjut%20dan%20ketersediaannya.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ml-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 text-white font-semibold rounded-lg shadow-md transition text-sm"
@@ -358,7 +358,7 @@ export default function SewaRuangan({ rooms = [] }) {
                     </p>
 
                     <a
-                        href="https://wa.me/6289513822017?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20ingin%20mendapatkan%20informasi%20dan%20penawaran%20sewa%20ruangan.%20Terima%20kasih."
+                        href="https://wa.me/6289651969329?text=Halo%20PT%20Bina%20Auto%20Solusi,%20saya%20ingin%20mendapatkan%20informasi%20dan%20penawaran%20sewa%20ruangan.%20Terima%20kasih."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-8 py-3.5 bg-white text-amber-700 hover:bg-slate-50 font-semibold rounded-xl shadow-xl transition-all text-sm sm:text-base gap-3 group"

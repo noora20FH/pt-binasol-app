@@ -13,8 +13,6 @@ import {
 export default function Footer() {
     return (
         <footer className="bg-[#111827] text-white mt-20">
-            {" "}
-            {/* Hardcode dark color biar pasti */}
             {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
@@ -108,29 +106,50 @@ export default function Footer() {
                             Hubungi Kami
                         </h4>
                         <ul className="space-y-4 text-gray-400">
+                            {/* WhatsApp */}
+                            <li className="flex items-start space-x-3">
+                                <Phone className="w-5 h-5 text-[#f97316] mt-0.5 flex-shrink-0" />
+                                <a
+                                    href="https://wa.me/628139854308"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-[#f97316] transition-colors"
+                                >
+                                    +62 813 9854 308
+                                </a>
+                            </li>
+
+                            {/* Email */}
+                            <li className="flex items-start space-x-3">
+                                <Mail className="w-5 h-5 text-[#f97316] mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <a
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=info@binaauto.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:text-[#f97316] transition-colors block"
+                                    >
+                                        info@binaauto.com
+                                    </a>
+                                    <a
+                                        href="https://mail.google.com/mail/?view=cm&fs=1&to=support@binaauto.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:text-[#f97316] transition-colors"
+                                    >
+                                        support@binaauto.com
+                                    </a>
+                                </div>
+                            </li>
+
+                            {/* Alamat */}
                             <li className="flex items-start space-x-3">
                                 <MapPin className="w-5 h-5 text-[#f97316] mt-0.5 flex-shrink-0" />
                                 <span>
-                                    Jl. Raya Narogong Km. 12 17151 Kota Bekasi Jawa Barat
+                                    Jl. Raya Narogong Km. 12 17151
+                                    <br />
+                                    Kota Bekasi, Jawa Barat
                                 </span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                                <Phone className="w-5 h-5 text-[#f97316]" />
-                                <a
-                                    href="tel:+621234567890"
-                                    className="hover:text-[#f97316] transition-colors"
-                                >
-                                    +62 123 456 7890
-                                </a>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                                <Mail className="w-5 h-5 text-[#f97316]" />
-                                <a
-                                    href="mailto:info@binaauto.com"
-                                    className="hover:text-[#f97316] transition-colors"
-                                >
-                                    info@binaauto.com
-                                </a>
                             </li>
                         </ul>
                     </div>
@@ -160,6 +179,7 @@ export default function Footer() {
                     </div>
                 </div>
             </div>
+
             {/* Bottom Bar */}
             <div className="border-t border-gray-800 py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">

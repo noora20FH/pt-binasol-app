@@ -109,6 +109,7 @@ class OrderController extends Controller
                 'created_at'      => $order->created_at,
                 'total_amount'    => $order->total_amount,
                 'payment_status'  => $order->payment_status,
+                'payment_type'    => $order->payment_type,
                 'items'           => $order->items->map(function ($item) {
                     $firstImage = $item->product?->images?->first();
                     $imageUrl   = $firstImage?->image_url

@@ -68,7 +68,6 @@ class CheckoutController extends Controller
             'customer_address' => 'required|string',
             'city'             => 'required|string|max:100',
             'postal_code'      => 'required|string|max:10',
-            'payment_method'   => 'required|in:bank_transfer,e_wallet,cod',
             'notes'            => 'nullable|string|max:500',
         ]);
 
@@ -87,17 +86,16 @@ class CheckoutController extends Controller
         $fullAddress = trim($validated['customer_address'] . ', ' . $validated['city'] . ' ' . $validated['postal_code']);
 
         DB::beginTransaction();
-
         try {
             $order = Order::create([
                 'order_number'     => 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6)),
                 'user_id'          => auth()->id(),
-                'subtotal'         => $subtotal,           // ← tambahkan
-                'shipping_fee'     => $shipping,           // ← tambahkan
-                'tax_amount'       => $tax,                // ← tambahkan
+                'subtotal'         => $subtotal,
+                'shipping_fee'     => $shipping,
+                'tax_amount'       => $tax,
                 'total_amount'     => $total,
                 'payment_status'   => 'pending',
-                'payment_type'     => $validated['payment_method'],
+                'payment_type'     => null,
                 'customer_name'    => $validated['customer_name'],
                 'customer_email'   => $validated['customer_email'],
                 'customer_phone'   => $validated['customer_phone'],

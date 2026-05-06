@@ -449,64 +449,6 @@ const handleSubmit = async (e) => {
 
                                 {/* Metode Pembayaran */}
                                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                                            <CreditCard className="w-5 h-5 text-primary-600" />
-                                        </div>
-                                        <h2 className="text-xl font-bold text-gray-900">
-                                            Metode Pembayaran
-                                        </h2>
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        {[
-                                            {
-                                                value: "bank_transfer",
-                                                label: "Transfer Bank",
-                                                desc: "BCA, Mandiri, BNI, BRI",
-                                            },
-                                            {
-                                                value: "e_wallet",
-                                                label: "E-Wallet",
-                                                desc: "GoPay, OVO, Dana, LinkAja",
-                                            },
-                                            {
-                                                value: "cod",
-                                                label: "COD (Cash on Delivery)",
-                                                desc: "Bayar saat barang tiba",
-                                            },
-                                        ].map((method) => (
-                                            <label
-                                                key={method.value}
-                                                className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                                                    formData.payment_method ===
-                                                    method.value
-                                                        ? "border-primary-500 bg-primary-50"
-                                                        : "border-gray-200 hover:border-primary-300"
-                                                }`}
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    name="payment_method"
-                                                    value={method.value}
-                                                    checked={
-                                                        formData.payment_method ===
-                                                        method.value
-                                                    }
-                                                    onChange={handleChange}
-                                                    className="w-5 h-5 text-primary-600"
-                                                />
-                                                <div className="flex-1">
-                                                    <p className="font-semibold text-gray-900">
-                                                        {method.label}
-                                                    </p>
-                                                    <p className="text-sm text-gray-500">
-                                                        {method.desc}
-                                                    </p>
-                                                </div>
-                                            </label>
-                                        ))}
-                                    </div>
 
                                     <div className="mt-4">
                                         <label className="block text-sm font-semibold text-gray-700 mb-2">

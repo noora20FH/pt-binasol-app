@@ -73,8 +73,6 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified', 'redirect.admin.cms'])->name('dashboard');
 
-Route::post('/midtrans/notification', [MidtransNotificationController::class, 'handle'])
-    ->name('midtrans.notification');
 
 Route::get('/test-webhook', function () {
     return 'Webhook route OK - POST method siap';

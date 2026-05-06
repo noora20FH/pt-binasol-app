@@ -41,6 +41,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string',
             'customer_email' => 'required|email',
             'customer_address' => 'required|string',
+            'customer_phone' => 'nullable|string|max:20',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -67,6 +68,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string',
             'customer_email' => 'required|email',
             'customer_address' => 'required|string',
+            'customer_phone' => 'nullable|string|max:20',
         ]);
 
         $order->update($validated);
@@ -166,7 +168,7 @@ class OrderController extends Controller
                 'payment_type' => $order->payment_type,
                 'customer_name' => $order->customer_name,
                 'customer_email' => $order->customer_email,
-                'customer_phone' => '', // Not stored in db yet
+                'customer_phone' => $order->customer_phone,
                 'customer_address' => $order->customer_address,
                 'items' => $order->items->map(function ($item) {
                     return [

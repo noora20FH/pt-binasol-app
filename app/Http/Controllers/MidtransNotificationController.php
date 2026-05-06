@@ -50,6 +50,11 @@ class MidtransNotificationController extends Controller
         };
 
         $order->payment_status = $newStatus;
+        if ($newStatus === 'expire') {
+            // Tambahkan log khusus expired
+            Log::info("⚠️ Order {$order->order_number} has expired. Buyer did not pay on time.");
+
+        }
         if ($paymentType) {
             $order->payment_type = $paymentType;   // qris, bca_va, gopay, dll
         }

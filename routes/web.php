@@ -24,10 +24,10 @@ use App\Http\Controllers\Admin\AdminCarouselSlideController;
 use App\Http\Controllers\MidtransNotificationController;
 
 
-// Public Routes (guests & customers)
+// Public Routes (guests)
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', [HomeController::class, 'index'])
-    ->middleware('redirect.admin.cms')           // ← admin akan di-redirect ke admin dashboard
+    ->middleware('redirect.admin.cms')          
     ->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
@@ -74,9 +74,6 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', 'redirect.admin.cms'])->name('dashboard');
 
 
-Route::get('/test-webhook', function () {
-    return 'Webhook route OK - POST method siap';
-});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

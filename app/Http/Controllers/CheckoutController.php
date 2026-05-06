@@ -92,13 +92,16 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'order_number'     => 'ORD-' . date('Ymd') . '-' . strtoupper(Str::random(6)),
                 'user_id'          => auth()->id(),
+                'subtotal'         => $subtotal,           // ← tambahkan
+                'shipping_fee'     => $shipping,           // ← tambahkan
+                'tax_amount'       => $tax,                // ← tambahkan
+                'total_amount'     => $total,
+                'payment_status'   => 'pending',
+                'payment_type'     => $validated['payment_method'],
                 'customer_name'    => $validated['customer_name'],
                 'customer_email'   => $validated['customer_email'],
                 'customer_phone'   => $validated['customer_phone'],
                 'customer_address' => $fullAddress,
-                'total_amount'     => $total,
-                'payment_status'   => 'pending',
-                'payment_type'     => $validated['payment_method'],
                 'notes'            => $validated['notes'] ?? null,
             ]);
 
@@ -115,31 +118,53 @@ class CheckoutController extends Controller
             $this->cartService->clearCart($request);
 
             // === MIDTRANS SNAP TOKEN ===
-            \Midtrans\Config::$serverKey = config('midtrans.server_key');
+            \Midtrans\Config::$serverKey    = config('midtrans.server_key');
             \Midtrans\Config::$isProduction = config('midtrans.is_production');
-            \Midtrans\Config::$isSanitized = true;
-            \Midtrans\Config::$is3ds = true;
+            \Midtrans\Config::$isSanitized  = true;
+            \Midtrans\Config::$is3ds        = true;
+
+            $productItems = $cartData['items']->map(fn($item) => [
+                'id'       => $item['id'],
+                'price'    => (int) $item['price'],
+                'quantity' => $item['quantity'],
+                'name'     => $item['name'],
+            ])->toArray();
+
+            // Tambahkan Shipping dan Pajak sebagai item terpisah
+            $item_details = $productItems;
+
+            if ($shipping > 0) {
+                $item_details[] = [
+                    'id'       => 'SHIPPING',
+                    'price'    => (int) $shipping,
+                    'quantity' => 1,
+                    'name'     => 'Ongkos Kirim',
+                ];
+            }
+
+            if ($tax > 0) {
+                $item_details[] = [
+                    'id'       => 'TAX',
+                    'price'    => (int) $tax,
+                    'quantity' => 1,
+                    'name'     => 'PPN 11%',
+                ];
+            }
 
             $snapToken = \Midtrans\Snap::getSnapToken([
                 'transaction_details' => [
                     'order_id'     => $order->order_number,
-                    'gross_amount' => (int) $order->total_amount,
+                    'gross_amount' => (int) $order->total_amount,   // tetap pakai total
                 ],
                 'customer_details' => [
                     'first_name' => $validated['customer_name'],
                     'email'      => $validated['customer_email'],
                     'phone'      => $validated['customer_phone'],
                 ],
-                'item_details' => $cartData['items']->map(fn($item) => [
-                    'id'       => $item['id'],
-                    'price'    => (int) $item['price'],
-                    'quantity' => $item['quantity'],
-                    'name'     => $item['name'],
-                ])->toArray(),
+                'item_details' => $item_details,   // ← ini yang diperbaiki
             ]);
 
             $order->update(['snap_token' => $snapToken]);
-
             DB::commit();
 
             if ($request->wantsJson()) {
@@ -149,7 +174,7 @@ class CheckoutController extends Controller
                         'id'            => $order->id,
                         'order_number'  => $order->order_number,
                         'total_amount'  => $order->total_amount,
-                        'payment_status'=> $order->payment_status,
+                        'payment_status' => $order->payment_status,
                         'snap_token'    => $snapToken,   // ← tambahkan ini
                     ],
                 ]);

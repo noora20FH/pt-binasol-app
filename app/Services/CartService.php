@@ -46,16 +46,18 @@ class CartService
         $cart = $this->getOrCreateCart($request);
         $product = Product::findOrFail($productId);
 
-        $item = CartItem::updateOrCreate(
+        $item = CartItem::firstOrCreate(
             [
                 'cart_id'    => $cart->id,
                 'product_id' => $product->id,
             ],
             [
-                'quantity'   => DB::raw("quantity + {$quantity}"),
+                'quantity'   => 0,
                 'unit_price' => $product->price,
             ]
         );
+
+        $item->increment('quantity', $quantity);
 
         return [
             'success' => true,
@@ -130,9 +132,9 @@ class CartService
                 'name'     => $item->product->name,
                 'price'    => $item->unit_price ?? $item->product->price,
                 'quantity' => $item->quantity,
-               'image' => $item->product->images->first()?->image_path
-    ? Storage::url(ltrim($item->product->images->first()->image_path, '/'))
-    : null,
+                'image' => $item->product->images->first()?->image_path
+                    ? Storage::url(ltrim($item->product->images->first()->image_path, '/'))
+                    : null,
                 'total'    => ($item->unit_price ?? $item->product->price) * $item->quantity,
             ];
         });

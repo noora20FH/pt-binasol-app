@@ -8,5 +8,5 @@ use Illuminate\Support\Facades\Route;
 Route::post('/midtrans/notification', [MidtransNotificationController::class, 'handle'])
     ->name('midtrans.notification');
 
-require __DIR__ . '/auth.php';
+
 
